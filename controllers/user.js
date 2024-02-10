@@ -16,7 +16,7 @@ export async function createAccountClient(req, res) {
       }
   
       const newUser = await User.create({
-        UserName: req.body.UserName,
+        username: req.body.username,
         email: req.body.email,
         password: req.body.password,
         Role: 'Client', 
@@ -38,7 +38,7 @@ export async function createAccountClient(req, res) {
       res.status(400).json({ errors: validationResult(req).array() });
     } else {
       User.create({
-        UserName: req.body.UserName,
+        username: req.body.username,
         email: req.body.email,
         password: await hash(req.body.password, 10),
         Role: 'ClientSub', 
@@ -102,7 +102,7 @@ res.status(500).send('Server Error');
       
       const payload = {
         _id: user._id,
-        username: user.UserName,
+        username: user.username,
         email: user.email,
         role: user.Role,
         
@@ -113,7 +113,7 @@ res.status(500).send('Server Error');
       const token = jwt.sign(payload, apiKey);
   
       
-      return res.status(200).send({ token, apiKey, _id: user._id, UserName: user.UserName, email: user.email });
+      return res.status(200).send({ token, apiKey, _id: user._id, username: user.username, email: user.email });
     } catch (error) {
       console.error(error);
       return res.status(500).send('Internal server error');
@@ -141,7 +141,7 @@ res.status(500).send('Server Error');
      
       const payload = {
         _id: ClientSub._id,
-        username: ClientSub.UserName,
+        username: ClientSub.username,
         email: ClientSub.email,
         role: ClientSub.Role, 
         

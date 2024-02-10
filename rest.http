@@ -1,0 +1,39 @@
+
+POST http://localhost:3000/user/registerclient
+Content-Type: application/json
+
+{
+  "username": "clientUsername",
+  "email": "client@example.com",
+  "password": "clientPassword"
+}
+
+
+POST http://localhost:3000/user/loginclient
+Content-Type: application/json
+
+{
+  "email": "client@example.com",
+  "password": "clientPassword"
+}
+
+
+GET http://localhost:3000/user/users
+
+
+GET http://localhost:3000/user/:id
+
+
+PUT http://localhost:3000/user/:id/update
+Content-Type: application/json
+
+{
+  "username": "newUsername",
+  "email": "newEmail@example.com",
+  "password": "newPassword",
+  "role": "Client"
+}
+
+
+DELETE http://localhost:3000/user/:id/delete
+

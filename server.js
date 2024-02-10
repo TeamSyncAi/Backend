@@ -2,16 +2,17 @@ import express from 'express';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
+import dotenv from 'dotenv';
 import cors from 'cors'
 const app = express();
 const PORT = process.env.PORT || 3000;
-const hostname = '127.0.0.1';
-import { notFoundError, errorHandler } from './middlewares/error-handler.js';
 
+import { notFoundError, errorHandler } from './middlewares/error-handler.js';
+dotenv.config();
 app.use(morgan('dev'));
 app.use(cors())
 app.use(express.json());
-app.use('/api/user', userRouter);
+app.use('/user', userRouter);
 app.use(notFoundError);
 app.use(errorHandler);
 app.use(express.json())
