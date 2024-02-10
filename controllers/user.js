@@ -53,7 +53,7 @@ export async function createAccountClient(req, res) {
   }
 
 
-  export async function modifyUserProfile(req, res) {
+  export async function updateUser(req, res) {
   const { username, email, password, role } = req.body;
 
 
