@@ -1,4 +1,4 @@
-import user from "../models/user.js";
+import  User  from '../models/user.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
@@ -265,4 +265,96 @@ export async function deleteUser(req, res){
     }
 
 
-    
+export async function sendActivationCode(req, res) {
+    try {
+      const resetCode = Math.floor(1000 + Math.random() * 9000).toString();
+      const email = req.body.email;
+      const user = await User.findOne({ email });
+      const username = user.username;
+  
+      const htmlString = `
+        <body style='font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0;'>
+          <table width='100%' cellpadding='0' style='max-width: 600px; margin: 20px auto; background-color: #fff; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
+            <tr>
+              <td style='padding: 20px;'>
+                <h2 style='color: #333;'>Activation Code Email</h2>
+                <p>Dear ${username},</p>
+                <p>Your activation code is: <strong style='color: #009688;'>${resetCode}</strong></p>
+                <p>Please use this code to reset your password.</p>
+                <p>If you did not request this code, please disregard this email.</p>
+                <p>Thank you!</p>
+              </td>
+            </tr>
+          </table>
+        </body>
+      `;
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.SENDER_EMAIL,
+          pass: process.env.PASSWORD_EMAIL
+        },
+      });
+      transporter.sendMail({
+        from: process.env.SENDER_EMAIL,
+        to: req.body.email,
+        subject: "Your Activation Code ✔",
+        html: htmlString,
+      });
+  
+      await User.updateOne({
+        email: req.body.email
+      }, {
+        resetCode: resetCode
+      });
+  
+      res.status(200).json({ email: req.body.email, resetCode });
+    } catch (error) {
+      res.status(400).json({
+        error: error
+      });
+    }
+  }
+      
+
+export async function forgotPassword(req, res){
+    const { email, newPassword, confirmPassword } = req.body;
+    const user = await User.findOne({ email });
+  
+    if (newPassword === confirmPassword) {
+      const hashedPassword = bcrypt.hashSync(newPassword, 10);
+      try {
+        await User.updateOne({ _id: user._id }, { password: hashedPassword });
+        res.status(200).json({ data: req.body });
+      } catch (err) {
+        res.status(500).json({ message: err });
+      }
+    } else {
+      res.status(500).json({ message: "Passwords don't match" });
+    }
+  }
+
+  export async function changePassword(req, res){
+    const { email, newPassword, confirmPassword, oldPassword } = req.body;
+  
+    const user = await User.findOne({ email });
+  
+    if (user && bcrypt.compareSync(oldPassword, user.password)) {
+      if (newPassword === confirmPassword) {
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
+        try {
+          user.password = hashedPassword;
+          await user.save();
+          res.status(200).json({ data: req.body });
+        } catch (err) {
+          res.status(500).json({ message: err });
+        }
+      } else {
+        res.status(200).json({ response: "Passwords don't match" });
+      }
+    } else {
+      res.status(500).json({ message: "Email or password don't match" });
+    }
+  }
+
+  
