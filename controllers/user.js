@@ -54,29 +54,33 @@ export async function createAccountClient(req, res) {
 
 
   export async function modifyUserProfile(req, res) {
-    try {
-      const _id = req.params._id; 
-      const { UserName, email, password } = req.body;
-  
-      
-      const user = await User.findOne({ _id });
-  
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      
-      user.UserName = UserName;
-      user.email = email;
-      user.password = password;
-      
-  
-      const updatedUser = await user.save();
-  
-      res.json({ message: 'User profile updated successfully', data: updatedUser });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+  const { username, email, password, role } = req.body;
+
+
+const userFields = {};
+if (username) userFields.username = username;
+if (email) userFields.email = email;
+if (password) userFields.password = password;
+if (role) userFields.role = role;
+
+
+try {
+let user = await User.findById(req.params.id);
+
+
+if (!user) {
+return res.status(404).json({ error: 'User not found' });
+}
+
+
+user = await User.findByIdAndUpdate(req.params.id, { $set: userFields }, { new: true });
+
+
+res.json({ message: 'User updated successfully', user });
+} catch (err) {
+console.error(err.message);
+res.status(500).send('Server Error');
+}
   }
 
   export async function authenticateClient(req, res) {
@@ -205,4 +209,60 @@ export async function createAccountClient(req, res) {
   }
 
 
-  
+  export async function banUser(req, res){
+    const userId = req.params.id; 
+
+    try {
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      user.isBanned = true; 
+      
+      await user.save();
+
+      res.status(200).json({ message: 'User banned successfully', user });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+
+
+  export async function getUserById(req, res){
+    try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+    } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+    }
+    }
+
+export async function deleteUser(req, res){
+    try {
+    let user = await User.findById(req.params.id);
+    
+    
+    if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+    }
+    
+    
+    await User.findByIdAndRemove(req.params.id);
+    
+    
+    res.json({ message: 'User deleted successfully' });
+    } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+    }
+    }
+
+
+    
