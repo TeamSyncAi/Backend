@@ -23,6 +23,7 @@ GET http://localhost:3000/user/
 
 GET http://localhost:3000/user/:id
 
+GET http://localhost:3000/user/userEmail
 
 PUT http://localhost:3000/user/:id/update
 Content-Type: application/json
@@ -35,5 +36,66 @@ Content-Type: application/json
 }
 
 
-DELETE http://localhost:3000/user/:id/delete
+DELETE http://localhost:3000/:id/delete
 
+### Ban
+PUT http://localhost:3000/:id/ban
+
+### Delete User
+//DELETE http://localhost:3000/user/userId/delete
+
+### Send Activation Code
+POST http://localhost:3000/user/reset
+Content-Type: application/json
+
+{
+    "email": "client1@example.com"
+}
+
+### Forgot Password
+POST http://localhost:3000/user/forgot
+Content-Type: application/json
+
+{
+    "email": "client1@example.com",
+    "newPassword": "newpassword123",
+    "confirmPassword": "newpassword123"
+}
+
+### Change Password
+PUT http://localhost:3000/user/change
+Content-Type: application/json
+
+{
+    "email": "client1@example.com",
+    "oldPassword": "password123",
+    "newPassword": "newpassword123",
+    "confirmPassword": "newpassword123"
+}
+
+### Register ClientSub
+POST http://localhost:3000/user/registerclientSub
+Content-Type: application/json
+
+{
+    "UserName": "clientSub1",
+    "email": "clientsub1@example.com",
+    "password": "password123"
+}
+
+### Authenticate ClientSub
+POST http://localhost:3000/user/loginclientSub
+Content-Type: application/json
+{
+  "username": "clientUsername",
+  "password": "clientPassword"
+}
+
+### Verify Reset Code
+POST http://localhost:3000/user/verify
+Content-Type: application/json
+
+{
+    "resetCode": "1234",  
+    "email": "client1@example.com"  
+}

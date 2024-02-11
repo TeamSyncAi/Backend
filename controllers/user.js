@@ -210,7 +210,7 @@ res.status(500).send('Server Error');
     }
 
 export async function deleteUser(req, res){
-    try {
+  try {
     let user = await User.findById(req.params.id);
     
     
@@ -321,5 +321,14 @@ export async function forgotPassword(req, res){
       res.status(500).json({ message: "Email or password don't match" });
     }
   }
+export async function verifyCode(req, res){
+  const { resetCode, email } = req.body;
+  const user = await User.findOne({ email });
 
+  if (resetCode === user.resetCode) {
+    res.status(200).json({ message: 'true' });
+  } else {
+    res.status(200).json({ message: 'false' });
+  }
+}
   
