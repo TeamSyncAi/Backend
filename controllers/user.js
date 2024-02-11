@@ -84,78 +84,42 @@ res.status(500).send('Server Error');
   }
 
   export async function authenticateClient(req, res) {
+    const { username, password } = req.body;
+
     try {
-      const data = req.body;
+      const user = await User.findByCredentials(username, password);
   
-   
-      const user = await User.findOne({ email: data.email, Role: 'client' });
-  
-      if (!user) {
-        return res.status(404).send('Email and password are invalid!');
+      if (user.isBanned) {
+        return res.status(403).json({ error: 'User is banned. Cannot login' });
       }
   
-      
-      if (data.password !== user.password) {
-        return res.status(401).send('Email or password is invalid');
-      }
-  
-      
-      const payload = {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.Role,
-        
-      };
-  
-      process.env.userId = user._id;  
-      const apiKey = process.env.SECRET_KEY;
-      const token = jwt.sign(payload, apiKey);
-  
-      
-      return res.status(200).send({ token, apiKey, _id: user._id, username: user.username, email: user.email });
+      const token = await user.generateAuthToken();
+      res.status(200).json({ message: 'Login successful', user, token });
     } catch (error) {
-      console.error(error);
-      return res.status(500).send('Internal server error');
+      console.error('Login error:', error);
+      res.status(401).json({ error: error.message });
     }
   }
 
 
   export async function authenticateClientSub(req, res) {
+    const { username, password } = req.body;
+
     try {
-      const data = req.body;
+      const user = await User.findByCredentials(username, password);
   
-      
-      const ClientSub = await User.findOne({ email: data.email, Role: 'ClientSub' });
-  
-      if (!ClientSub) {
-        return res.status(404).send('Email and password are invalid for ClientSub!');
+      if (user.isBanned) {
+        return res.status(403).json({ error: 'User is banned. Cannot login' });
       }
   
-      const validPass = bcrypt.compareSync(data.password, ClientSub.password);
-  
-      if (!validPass) {
-        return res.status(401).send('Email or password is invalid for ClientSub');
-      }
-  
-     
-      const payload = {
-        _id: ClientSub._id,
-        username: ClientSub.username,
-        email: ClientSub.email,
-        role: ClientSub.Role, 
-        
-      };
-  
-      const apiKey = process.env.SECRET_KEY;
-      const token = jwt.sign(payload, apiKey);
-  
-      return res.status(200).send({ token, apiKey });
+      const token = await user.generateAuthToken();
+      res.status(200).json({ message: 'Login successful', user, token });
     } catch (error) {
-      console.error(error);
-      return res.status(500).send('Internal server error');
+      console.error('Login error:', error);
+      res.status(401).json({ error: error.message });
     }
   }
+
 
 
   export async function getUserIdByEmail(req, res) {
@@ -180,15 +144,16 @@ res.status(500).send('Server Error');
 
   export async function displayAllUsers(req, res) {
     try {
-    
       const users = await User.find();
-  
-    
-      res.json({ users });
-    } catch (error) {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
+      if (!users || users.length === 0) {
+      return res.status(404).json({ error: 'Users not found' });
+      }
+      res.json(users);
+      } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+      }
+      }
 
 
   export async function displayUserProfile(req, res) {

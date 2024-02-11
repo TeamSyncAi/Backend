@@ -13,12 +13,12 @@ POST http://localhost:3000/user/loginclient
 Content-Type: application/json
 
 {
-  "email": "client@example.com",
+  "username": "clientUsername",
   "password": "clientPassword"
 }
 
 
-GET http://localhost:3000/user/users
+GET http://localhost:3000/user/
 
 
 GET http://localhost:3000/user/:id

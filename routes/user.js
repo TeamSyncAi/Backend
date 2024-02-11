@@ -27,7 +27,7 @@ router.post('/loginclientSub', authenticateClientSub);
 router.get('/:id', getUserById);
 router.get('/user/:email', getUserIdByEmail);
 
-router.get('/users', displayAllUsers);
+router.get('/',displayAllUsers);
 router.get('/user/:_id', displayUserProfile);
 
 router.put('/:id/ban', banUser);
