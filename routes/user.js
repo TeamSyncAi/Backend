@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import  User  from '../models/user.js';
-import { createAccountClient, createAccountClientSub, updateUser , authenticateClient, authenticateClientSub, getUserIdByEmail, displayAllUsers, displayUserProfile, banUser, getUserById, deleteUser, sendActivationCode, forgotPassword, changePassword,verifyCode } from '../controllers/user.js';
+import { createAccountClient, createAccountClientSub, updateUser , authenticateClient, authenticateClientSub, getUserIdByEmail, displayAllUsers, displayUserProfile, banUser, getUserById, deleteUser, sendActivationCode, forgotPassword, changePassword,verifyCode,ProfilePicUpload } from '../controllers/user.js';
 import { body } from 'express-validator';
 
 
@@ -37,5 +37,6 @@ router.post('/reset', sendActivationCode);
 router.post('/forgot', forgotPassword);
 router.put('/change', changePassword);
 router.post('/verify', verifyCode);
+router.post('/updatePicture', ProfilePicUpload);
 export default router;
 

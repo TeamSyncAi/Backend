@@ -39,7 +39,7 @@ default: 'Client',
 },
 
 
-
+picture: { type: String, required : false },
 
 });
 

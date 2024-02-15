@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
 import { validationResult } from 'express-validator';
+import upload from '../middlewares/multer.js'
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -332,3 +333,31 @@ export async function verifyCode(req, res){
   }
 }
   
+export  async function ProfilePicUpload (req,res,next){
+  upload.single('picture')(req, res,async (err) => {
+    if (err) {   
+      return res.status(500).json({ error: err.message }); 
+    } 
+    
+    try {         
+    const authenticatedusername = req.auth.username; 
+    if (authenticatedusername !== req.body.username) {
+      return res.status(403).json({ error: 'Permission denied. You can only change your own picture.' });
+    }
+
+   const user = await User.findOneAndUpdate(
+       { username: req.body.username },
+       { picture: req.file.path },
+       { new: true } 
+       );             
+       if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+        }
+                      
+       return res.status(200).json({ message: 'Profile picture updated', user });
+       } catch (error) {
+          return res.status(500).json({ error: 'Failed to update profile picture' });  
+      }
+  })     
+  
+};

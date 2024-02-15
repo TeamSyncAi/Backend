@@ -44,7 +44,7 @@ PUT http://localhost:3000/:id/ban
 ### Delete User
 //DELETE http://localhost:3000/user/userId/delete
 
-### Send Activation Code
+
 POST http://localhost:3000/user/reset
 Content-Type: application/json
 
@@ -52,7 +52,7 @@ Content-Type: application/json
     "email": "client1@example.com"
 }
 
-### Forgot Password
+
 POST http://localhost:3000/user/forgot
 Content-Type: application/json
 
@@ -62,7 +62,7 @@ Content-Type: application/json
     "confirmPassword": "newpassword123"
 }
 
-### Change Password
+
 PUT http://localhost:3000/user/change
 Content-Type: application/json
 
@@ -73,7 +73,7 @@ Content-Type: application/json
     "confirmPassword": "newpassword123"
 }
 
-### Register ClientSub
+
 POST http://localhost:3000/user/registerclientSub
 Content-Type: application/json
 
@@ -83,7 +83,7 @@ Content-Type: application/json
     "password": "password123"
 }
 
-### Authenticate ClientSub
+
 POST http://localhost:3000/user/loginclientSub
 Content-Type: application/json
 {
@@ -91,7 +91,7 @@ Content-Type: application/json
   "password": "clientPassword"
 }
 
-### Verify Reset Code
+
 POST http://localhost:3000/user/verify
 Content-Type: application/json
 
@@ -99,3 +99,14 @@ Content-Type: application/json
     "resetCode": "1234",  
     "email": "client1@example.com"  
 }
+
+
+GET http://localhost:3000/uploads/INSERT_FILENAME_HERE.jpg
+
+
+POST http://localhost:3000/user/updatePicture
+Content-Type: multipart/form-data
+
+Content-Disposition: form-data; name="picture"; filename="profile-picture.jpg"
+Content-Type: image/jpeg
+GET http://localhost:3000/logout
