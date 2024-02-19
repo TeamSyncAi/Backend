@@ -2,15 +2,15 @@
 
 import { Router } from 'express';
 const router = Router();
-import { createTask, updateTaskWithAI, deleteCompletedTasks } from '../controllers/planningController.js';
+import { createTask, updateTask, deleteTask } from '../controllers/planningController.js';
 
 // Route pour créer une nouvelle tâche
-router.post('/tasks', createTask);
+router.post('/createtasks', createTask);
 
 // Route pour mettre à jour une tâche avec l'IA
-router.put('/updatetasks/:id', updateTaskWithAI);
+router.put('/updatetasks/:id', updateTask);
 
 // Route pour supprimer les tâches terminées
-router.delete('/tasks/completed', deleteCompletedTasks);
+router.delete('/tasks/completed', deleteTask);
 
 export default router;

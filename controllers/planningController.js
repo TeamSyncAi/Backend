@@ -1,91 +1,70 @@
 // planningController.js
 
+// planningController.js
 import Task from '../models/planning.js';
-import { recommendTaskSchedule } from '../services/aiService';
+import { predictTaskDuration, predictTaskDates } from '../services/aiService.js'; // Ajout de predictTaskDates
 
-// Contrôleur pour créer une nouvelle tâche avec recommandation d'IA pour la planification
 export async function createTask(req, res) {
     try {
-        // Récupérer les données de la nouvelle tâche depuis le corps de la requête
+        console.log("Requête reçue pour créer une nouvelle tâche...");
         const taskData = req.body;
+        console.log("Données de la tâche reçues :", taskData);
+        const { complexity, size } = taskData;
+        console.log("Complexité de la tâche :", complexity);
+        console.log("Taille de la tâche :", size);
+        
+        console.log("Prédiction de la durée de la tâche...");
+        const duration = await predictTaskDuration(complexity, size);
+        console.log("Durée prédite de la tâche :", duration);
 
-        // Obtenir la recommandation de planification de l'IA
-        const { duration, startDate, endDate } = await recommendTaskSchedule(taskData);
+        console.log("Prédiction des dates de début et de fin de la tâche...");
+        const dates = predictTaskDates(complexity, size); // Utilisation de predictTaskDates
+        console.log("Dates de début et de fin prédites :", dates);
 
-        // Création de la tâche avec la planification recommandée
+        console.log("Création de la nouvelle tâche dans la base de données...");
         const newTask = new Task({
             title: taskData.title,
             description: taskData.description,
             duration: duration,
-            startDate: startDate,
-            endDate: endDate,
-            // Autres champs de la tâche
+            complexity: complexity,
+            size: size,
+            startDate: dates.startDate, // Ajout des dates de début et de fin
+            endDate: dates.endDate
         });
-        
-        // Enregistrer la nouvelle tâche dans la base de données
+
         await newTask.save();
-        
-        // Répondre avec la nouvelle tâche créée
+        console.log("Tâche créée avec succès :", newTask);
         res.status(201).json(newTask);
     } catch (error) {
-        // En cas d'erreur, renvoyer un message d'erreur avec le statut 400 (Bad Request)
+        console.error("Erreur lors de la création de la tâche :", error.message);
         res.status(400).json({ message: error.message });
     }
 }
 
-// Contrôleur pour mettre à jour une tâche avec l'IA
-export async function updateTaskWithAI(req, res) {
-  try {
-      const { id } = req.params;
-     
-      const taskDataToUpdate = req.body;
-      
-      // Récupérer la tâche existante depuis la base de données en utilisant findById
-      const existingTask = await Task.findById(id);
-      
-      if (!existingTask) {
-          return res.status(404).json({ message: "La tâche n'a pas été trouvée." });
-      }
-      
-      // Obtenir la recommandation de planification de l'IA pour les modifications souhaitées
-      const { duration, startDate, endDate } = await recommendTaskSchedule(taskDataToUpdate);
-      
-      // Mettre à jour la tâche avec les modifications recommandées par l'IA
-      existingTask.title = taskDataToUpdate.title || existingTask.title;
-      existingTask.description = taskDataToUpdate.description || existingTask.description;
-      existingTask.duration = duration || existingTask.duration;
-      existingTask.startDate = startDate || existingTask.startDate;
-      existingTask.endDate = endDate || existingTask.endDate;
-      
-      // Enregistrer les modifications dans la base de données
-      await existingTask.save();
-      
-      // Répondre avec la tâche mise à jour
-      res.json(existingTask);
-  } catch (error) {
-      // En cas d'erreur, renvoyer un message d'erreur avec le statut 400 (Bad Request)
-      res.status(400).json({ message: error.message });
-  }
+
+// Contrôleur pour mettre à jour une tâche
+// Mettre à jour une tâche existante
+export async function updateTask(req, res) {
+    try {
+        const taskId = req.params.id;
+        const updatedTaskData = req.body;
+
+        const updatedTask = await Task.findByIdAndUpdate(taskId, updatedTaskData, { new: true });
+
+        res.status(200).json(updatedTask);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
 
-// Contrôleur pour identifier et supprimer les tâches terminées
-export async function deleteCompletedTasks(req, res) {
+// Contrôleur pour supprimer une tâche
+export async function deleteTask(req, res) {
     try {
-        // Récupérer toutes les tâches depuis la base de données
-        const tasks = await find();
-        
-        // Identifier les tâches terminées avec l'IA
-        const completedTasks = tasks.filter(task => task.endDate <= new Date());
-        
-        // Supprimer les tâches terminées de la base de données
-        for (const task of completedTasks) {
-            await findByIdAndDelete(task._id);
-        }
-        
-        // Répondre avec les tâches supprimées
-        res.json({ message: 'Tâches terminées supprimées avec succès', deletedTasks: completedTasks });
+        const taskId = req.params.id;
+        await Task.findByIdAndRemove(taskId);
+
+        res.status(200).json({ message: 'Tâche supprimée avec succès' });
     } catch (error) {
-        // En cas d'erreur, renvoyer un message d'erreur avec le statut 500 (Internal Server Error)
-        res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
 }

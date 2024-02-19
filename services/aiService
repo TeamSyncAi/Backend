@@ -1,41 +1,28 @@
 // aiService.js
+import { PythonShell } from 'python-shell';
 
-// Fonction d'IA pour recommander la durée, la date de début et la date de fin d'une tâche
-export const recommendTaskSchedule = async (taskData) => {
-    try {
-        // Implémentez ici la logique d'IA pour recommander la durée, la date de début et la date de fin
-        // En fonction des caractéristiques de la tâche
-        
-        // Pour cet exemple, je vais simplement retourner des valeurs statiques
-        const duration = 3; // Durée recommandée en jours
-        const startDate = new Date(); // Date de début recommandée (aujourd'hui)
-        const endDate = new Date(Date.now() + duration * 24 * 60 * 60 * 1000); // Date de fin recommandée
-        
-        return { duration, startDate, endDate };
-    } catch (error) {
-        throw new Error('Erreur lors de la recommandation de la planification de la tâche : ' + error.message);
-    }
+export const predictTaskDuration = (complexity, size) => {
+    const options = {
+        scriptPath: 'C:\\Users\\user\\Desktop\\teamsync\\pythonmodels',
+        args: [complexity, size]
+    };
+
+    return new Promise((resolve, reject) => {
+        PythonShell.run('taskschedulemodel.py', options, (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                const durationInDays = parseFloat(results[0]);
+                resolve(durationInDays);
+            }
+        });
+    });
 };
 
-// Fonction d'IA pour identifier les tâches terminées
-export const identifyCompletedTasks = async (tasks) => {
-    try {
-        // Implémentez ici la logique d'IA pour identifier les tâches terminées
-        // Par exemple, vous pourriez utiliser un modèle de classification ou de détection d'anomalies
-        
-        // Pour cet exemple, je vais simplement supposer que l'IA retourne une liste de tâches terminées
-        const completedTasks = tasks.filter(task => task.endDate <= new Date());
-        
-        return completedTasks; // Retourne les tâches terminées
-    } catch (error) {
-        throw new Error('Erreur lors de l/identification des tâches terminées : ' + error.message);
-    }
+export const predictTaskDates = (complexity, size) => {
+    const durationInDays = predictTaskDuration(complexity, size); // Appel direct de predictTaskDuration
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + durationInDays);
+    return { startDate, endDate };
 };
-
-
-export const aiService = {
-  recommendTaskSchedule,
-  identifyCompletedTasks
-};
-
-export default aiService;

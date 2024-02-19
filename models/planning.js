@@ -12,19 +12,15 @@ const TaskSchema = new Schema({
         type: String,
         required: true
     },
-    duration: {
+    
+    complexity: {
         type: Number,
         required: true
     },
-    startDate: {
-        type: Date,
+    size: {
+        type: Number,
         required: true
-    },
-    endDate: {
-        type: Date,
-        required: true
-    },
-    // Autres champs de la tâche
+    }
 });
 
 // Modèle MongoDB pour une tâche
