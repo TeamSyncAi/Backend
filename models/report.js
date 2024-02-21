@@ -29,9 +29,7 @@ const reportSchema = new Schema({
         required: true
     },*/
     donnees: {
-        type: Map, 
-        of: String 
-    }
+        type: Schema.Types.Mixed }
 },
 {
     timestamps : true

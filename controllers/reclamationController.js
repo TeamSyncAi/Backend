@@ -23,7 +23,7 @@ export function addReclamation(req, res) {
 }
 
 export function getAllReclamation(req, res) {
-  reclamation.find({})
+  Reclamation.find({})
     .then((docs) => {
       res.status(200).json(docs);
     })
@@ -33,7 +33,7 @@ export function getAllReclamation(req, res) {
 }
 
 export function deleteAllReclamation(req, res) {
-  reclamation.deleteMany({})
+  Reclamation.deleteMany({})
     .then((docs) => {
       res.status(200).json(docs);
     })
@@ -43,7 +43,7 @@ export function deleteAllReclamation(req, res) {
 }
 
 export function getOnceReclamation(req, res) {
-  reclamation.findOne({ _id: req.params._id })
+  Reclamation.findOne({ _id: req.params._id })
     .then((docs) => {
       res.status(200).json(docs);
     })
@@ -54,7 +54,7 @@ export function getOnceReclamation(req, res) {
 
 
 export function deleteOnceReclamation(req, res) {
-  reclamation.findOneAndDelete({ _id: req.params._id })
+  Reclamation.findOneAndDelete({ _id: req.params._id })
     .then((doc) => {
       res.status(200).json(doc);
     })
@@ -69,7 +69,7 @@ export function UpdateReclamation(req, res) {
   const updatedInfoData = req.body;
   
     
-  reclamation.findByIdAndUpdate(_id, updatedInfoData )
+  Reclamation.findByIdAndUpdate(_id, updatedInfoData )
     .then((doc) => {
       res.status(200).json(doc);
     })

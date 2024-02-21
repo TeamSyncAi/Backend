@@ -30,4 +30,4 @@ const reclamationSchema = new Schema({
     timestamps : true
 });
 
-export default model("reclamation", reclamationSchema);
+export default model("Reclamation", reclamationSchema);
