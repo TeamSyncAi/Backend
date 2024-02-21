@@ -24,13 +24,5 @@ export function addReclamation(req, res) {
 }
 
 
-export function getAllReclamation(req, res) {
-  reclamation.find({})
-    .then((docs) => {
-      res.status(200).json(docs);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err });
-    });
-}
+
 
