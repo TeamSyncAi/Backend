@@ -43,6 +43,18 @@ export function getAllReport(req, res) {
         res.status(500).json({ error: err });
       });
   }
+
+  export function getOnceReport(req, res) {
+    Report.findOne({ _id: req.params._id })
+      .then((docs) => {
+        res.status(200).json(docs);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err });
+      })
+  }
+  
+  
   
   
 
