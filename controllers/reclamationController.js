@@ -23,6 +23,14 @@ export function addReclamation(req, res) {
   });
 }
 
-
+export function getAllInformation(req, res) {
+  information.find({})
+    .then((docs) => {
+      res.status(200).json(docs);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
 
 
