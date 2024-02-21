@@ -23,3 +23,17 @@ export function addReport(req, res) {
     res.status(500).json({ error: err.message });
   });
 }
+
+export function getAllReport(req, res) {
+    Report.find({})
+      .then((docs) => {
+        res.status(200).json(docs);
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err });
+      });
+  }
+  
+
+
+
