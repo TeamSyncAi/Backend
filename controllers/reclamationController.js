@@ -65,3 +65,18 @@ export function deleteOnceReclamation(req, res) {
 }
 
 
+export function UpdateReclamation(req, res) {
+  const { _id } = req.params;
+  const updatedInfoData = req.body;
+  
+    
+  reclamation.findByIdAndUpdate(_id, updatedInfoData )
+    .then((doc) => {
+      res.status(200).json(doc);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
+
+
