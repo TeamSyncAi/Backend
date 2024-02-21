@@ -5,7 +5,7 @@ const router = express.Router();
 router
 .route("/")
 .post(addReclamation)
-//.get(getAllReclamation)
+.get(getAllReclamation)
 //.delete(deleteAllReclamation);
 
 
