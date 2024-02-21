@@ -9,10 +9,10 @@ router
 .delete(deleteAllReclamation);
 
 
-/*router
+router
 .route("/:_id")
 .get(getOnceReclamation)
-.delete(deleteOnceReclamation)
+/*.delete(deleteOnceReclamation)
 .put(UpdateReclamation);*/
 
 export default router;
