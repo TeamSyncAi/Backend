@@ -54,3 +54,14 @@ export function getOnceReclamation(req, res) {
 }
 
 
+export function deleteOnceReclamation(req, res) {
+  reclamation.findOneAndDelete({ _id: req.params._id })
+    .then((doc) => {
+      res.status(200).json(doc);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
+
+
