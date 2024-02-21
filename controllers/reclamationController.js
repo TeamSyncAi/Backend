@@ -33,4 +33,14 @@ export function getAllInformation(req, res) {
     });
 }
 
+export function deleteAllReclamation(req, res) {
+  reclamation.deleteMany({})
+    .then((docs) => {
+      res.status(200).json(docs);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+}
+
 
