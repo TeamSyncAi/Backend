@@ -13,6 +13,6 @@ router
 .route("/:_id")
 .get(getOnceReclamation)
 .delete(deleteOnceReclamation)
-//.put(UpdateReclamation);*/
+.put(UpdateReclamation);
 
 export default router;
