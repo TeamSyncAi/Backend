@@ -1,5 +1,5 @@
 import express from "express";
-import { addReclamation, getAllReclamation,deleteAllReclamation/*, getOnceReclamation, deleteOnceReclamation,UpdateReclamation*/} from "../controllers/reclamationController.js";
+import { addReclamation, getAllReclamation,deleteAllReclamation, getOnceReclamation/*, deleteOnceReclamation,UpdateReclamation*/} from "../controllers/reclamationController.js";
 const router = express.Router();
 
 router
