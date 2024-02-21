@@ -1,5 +1,7 @@
 import Report from '../models/report.js'; 
 
+
+//crud
 export function addReport(req, res) {
   const { type, titre, description, dateDebut, dateFin, createur, donnees } = req.body;
 
