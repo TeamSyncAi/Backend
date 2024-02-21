@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import reclamationRoute from '../Backend/routes/reclamationRoute.js';
+import reportRoute from '../Backend/routes/reportRoute.js'
 
 const app = express() 
 const hostname = '127.0.0.1'; 
