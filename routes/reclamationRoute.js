@@ -1,18 +1,18 @@
 import express from "express";
-import { addReclamation, getAllReclamation,deleteAllReclamation,getOnceReclamation, deleteOnceReclamation,UpdateReclamation} from "../controllers/reclamationControlles.js";
+import { addReclamation, getAllReclamation,/*deleteAllReclamation,getOnceReclamation, deleteOnceReclamation,UpdateReclamation*/} from "../controllers/reclamationController.js";
 const router = express.Router();
 
 router
 .route("/")
 .post(addReclamation)
-.get(getAllReclamation)
-.delete(deleteAllReclamation);
+//.get(getAllReclamation)
+//.delete(deleteAllReclamation);
 
 
-router
+/*router
 .route("/:_id")
 .get(getOnceReclamation)
 .delete(deleteOnceReclamation)
-.put(UpdateReclamation);
+.put(UpdateReclamation);*/
 
 export default router;

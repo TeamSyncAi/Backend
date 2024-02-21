@@ -1,19 +1,18 @@
 
-import Reclamation from '../models/reclamation'; 
+import Reclamation from '../models/reclamation.js'; 
 
 
 export function addReclamation(req, res) {
-  const { titre, description/*,responsable, utilisateur*/ } = req.body;
-  const statut = req.body.statut || 'En attente'; 
-  const date = req.body.date || new Date(); 
+  const statutValue = req.body.statut || 'En attente';
   
   Reclamation.create({
-    titre,
-    description,
-    statut,
+    titre:req.body.titre,
+    description:req.body.description,
+    statut:statutValue,
     /*responsable,
     utilisateur,*/
-    date
+    
+    
   })
   .then((newReclamation) => {
     res.status(200).json(newReclamation);
@@ -22,4 +21,7 @@ export function addReclamation(req, res) {
     res.status(500).json({ error: err.message });
   });
 }
+
+
+
 

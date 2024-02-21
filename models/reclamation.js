@@ -10,10 +10,7 @@ const reclamationSchema = new Schema({
     type: String,
     required: true
   },
-  date: {
-    type: Date,
-    default: Date.now
-  },
+  
   statut: {
     type: String,
     enum: ['En attente', 'En cours', 'Résolue'],
