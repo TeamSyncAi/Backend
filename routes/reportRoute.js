@@ -9,10 +9,10 @@ router
 .delete(deleteAllReport);
 
 
-/*router
+router
 .route("/:_id")
 .get(getOnceReport)
-.delete(deleteOnceReport)
+/*.delete(deleteOnceReport)
 .put(UpdateReport);*/
 
 export default router;
