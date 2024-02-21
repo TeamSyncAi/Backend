@@ -12,7 +12,7 @@ router
 router
 .route("/:_id")
 .get(getOnceReclamation)
-/*.delete(deleteOnceReclamation)
-.put(UpdateReclamation);*/
+.delete(deleteOnceReclamation)
+//.put(UpdateReclamation);*/
 
 export default router;
