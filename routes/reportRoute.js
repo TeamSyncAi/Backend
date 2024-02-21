@@ -5,8 +5,8 @@ const router = express.Router();
 router
 .route("/")
 .post(addReport)
-/*.get(getAllReport)
-.delete(deleteAllReport);
+.get(getAllReport)
+/*.delete(deleteAllReport);
 
 
 router
