@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+const { Schema, model, Types } = mongoose;
 
-const reclamationSchema = new mongoose.Schema({
-  titre: {
+const reclamationSchema = new Schema({
+    titre: {
     type: String,
     required: true
   },
@@ -27,8 +28,9 @@ const reclamationSchema = new mongoose.Schema({
     ref: 'Utilisateur',
     required: true
   }
+},
+{
+    timestamps : true
 });
 
-const Reclamation = mongoose.model('Reclamation', reclamationSchema);
-
-module.exports = Reclamation;
+export default model("reclamation", reclamationSchema);
