@@ -12,7 +12,7 @@ router
 router
 .route("/:_id")
 .get(getOnceReport)
-/*.delete(deleteOnceReport)
-.put(UpdateReport);*/
+.delete(deleteOnceReport)
+/*.put(UpdateReport);*/
 
 export default router;
