@@ -19,7 +19,7 @@ const reclamationSchema = new Schema({
     enum: ['En attente', 'En cours', 'Résolue'],
     default: 'En attente'
   },
-  responsable: {
+  /*responsable: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Utilisateur'
   },
@@ -27,7 +27,7 @@ const reclamationSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Utilisateur',
     required: true
-  }
+  }*/
 },
 {
     timestamps : true
