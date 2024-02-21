@@ -23,11 +23,11 @@ const reportSchema = new Schema({
         type: Date,
         required: true
     },
-    createur: {
+    /*createur: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Utilisateur',
         required: true
-    },
+    },*/
     donnees: {
         type: Map, 
         of: String 
