@@ -54,8 +54,8 @@ export function getAllReport(req, res) {
       })
   }
 
-  export function deleteOnceReport(req, res) {
-    Report.findOneAndDelete({ _id: req.params._id })
+  export function deleteOnceReclamation(req, res) {
+    Reclamation.findOneAndDelete({ _id: req.params._id })
       .then((doc) => {
         res.status(200).json(doc);
       })
@@ -63,6 +63,9 @@ export function getAllReport(req, res) {
         res.status(500).json({ error: err });
       });
   }
+  
+  
+  
   
   
   
