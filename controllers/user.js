@@ -6,32 +6,37 @@ import { validationResult } from 'express-validator';
 import upload from '../middlewares/multer.js'
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import pdfParse from 'pdf-parse'; 
+import formidable from "formidable";
+
 dotenv.config();
+const { parse } = pdfParse;
 
 export async function createAccountClient(req, res) {
-    try {
-    
-      if (!validationResult(req).isEmpty()) {
-        console.error('Validation errors:', validationResult(req).array());
-        return res.status(400).json({ errors: validationResult(req).array() });
-      }
+  try {
   
-      const newUser = await User.create({
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        Role: 'Client', 
-       
-      });
-  
-      console.log('New user created:', newUser);
-  
-      return res.status(200).json(newUser);
-    } catch (error) {
-      console.error('Error creating user:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+    if (!validationResult(req).isEmpty()) {
+      console.error('Validation errors:', validationResult(req).array());
+      return res.status(400).json({ errors: validationResult(req).array() });
     }
+
+    const newUser = await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password,
+      Role: 'Client', 
+     
+    });
+
+    console.log('New user created:', newUser);
+
+    return res.status(200).json(newUser);
+  } catch (error) {
+    console.error('Error creating user:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
+}
 
   export async function createAccountClientSub(req, res) {
     
@@ -359,5 +364,66 @@ export  async function ProfilePicUpload (req,res,next){
           return res.status(500).json({ error: 'Failed to update profile picture' });  
       }
   })     
+
+
+
+
   
 };
+
+export async function extractSkillsFromUploadedPDF(req, res) {
+  try {
+    // Handle potential absence of PDF file gracefully
+    const form = formidable({ multiples: false });
+    const files = await new Promise((resolve, reject) => {
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          console.error("Error parsing form data:", err);
+          // Log the error but don't generate an error response
+          reject(err);
+          return; // Skip to the response below
+        }
+        resolve(files);
+      });
+    });
+
+    const pdfFile = files.file;
+
+    // Check if PDF file exists and respond accordingly
+    if (!pdfFile) {
+      return res.status(400).json({ message: "No PDF file uploaded" }); // Informative message
+    }
+
+    // Handle file path and permissions (you need to implement this)
+    // ...
+
+    try {
+      const pdfBytes = await pdfFile.buffer();
+
+      try {
+        const pdfText = await parse(pdfBytes);
+
+        const skills = await extractSkillInformation(pdfText); // Implement this function
+
+        // Create a new user with the extracted skills
+        const newUser = await User.create({
+          specialite: skills // Assuming 'specialite' is the field to store skills in the User model
+        });
+
+        console.log('New user created:', newUser);
+
+        return res.status(200).json(newUser);
+      } catch (error) {
+        console.error("Error parsing PDF:", error);
+        return res.status(500).json({ error: "Failed to extract skills" });
+      }
+    } catch (error) {
+      console.error("Error reading file buffer:", error);
+      return res.status(500).json({ error: "Failed to extract skills" });
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ error: "An unexpected error occurred" }); // Generic error message
+  }
+}
+

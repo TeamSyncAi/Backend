@@ -110,3 +110,5 @@ Content-Type: multipart/form-data
 Content-Disposition: form-data; name="picture"; filename="profile-picture.jpg"
 Content-Type: image/jpeg
 GET http://localhost:3000/logout
+
+POST http://localhost:3000/extractskill

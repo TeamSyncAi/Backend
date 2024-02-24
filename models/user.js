@@ -32,10 +32,8 @@ isBanned: {
     default: false },
     
 
-role: {
+specialite: {
 type: String,
-enum: ['Client','ClientSub'],
-default: 'Client',
 },
 
 
