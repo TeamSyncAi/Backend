@@ -34,7 +34,8 @@
     "nodemailer": "^6.9.9",
     "nodemon": "^3.0.3",
     "path": "^0.12.7",
-    "pdf-parse": "^1.1.1",
+   
+    "pdfreader": "^3.0.2",
     "twilio": "^4.22.0"
   }
 }

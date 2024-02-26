@@ -7,11 +7,13 @@ import upload from '../middlewares/multer.js'
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import fs from 'fs';
-import pdfParse from 'pdf-parse'; 
 import formidable from "formidable";
+import { PdfReader } from "pdfreader";
+import path from "path";
+import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 
 dotenv.config();
-const { parse } = pdfParse;
 
 export async function createAccountClient(req, res) {
   try {
@@ -37,8 +39,7 @@ export async function createAccountClient(req, res) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
-
-  export async function createAccountClientSub(req, res) {
+ /* export async function createAccountClientSub(req, res) {
     
     if (!validationResult(req).isEmpty()) {
       res.status(400).json({ errors: validationResult(req).array() });
@@ -56,7 +57,7 @@ export async function createAccountClient(req, res) {
           res.status(500).json({ error: err });
         });
     }
-  }
+  }*/
 
 
   export async function updateUser(req, res) {
@@ -427,3 +428,157 @@ export async function extractSkillsFromUploadedPDF(req, res) {
   }
 }
 
+export async function parsePDF(pdfBuffer) {
+  return new Promise((resolve, reject) => {
+      let skills = [];
+      new PdfReader().parseBuffer(pdfBuffer, (err, item) => {
+          if (err) {
+              reject(err);
+              return;
+          } else if (!item) {
+              // Return extracted skills when end of file is reached
+              resolve(skills);
+          } else if (item.text) {
+              // Extract skills from the text
+              const extractedSkills = extractSkills(item.text);
+              if (extractedSkills.length > 0) {
+                  skills = [...skills, ...extractedSkills];
+              }
+          }
+      });
+  });
+}
+const skillList = [
+  // Soft skills
+  "communication",
+  "teamwork",
+  "problem solving",
+  "leadership",
+  "creativity",
+  "time management",
+  "organization",
+  "analytical skills",
+  "interpersonal skills",
+  "adaptability",
+  "attention to detail",
+
+  // Hard skills
+  "java",
+  "python",
+  "javascript",
+  "c++",
+  "c#",
+  "sql",
+  "html",
+  "css",
+  "linux",
+  "machine learning",
+
+  // Additional hard skills
+  "php",
+  "ruby",
+  "go",
+  "swift",
+  "kotlin",
+  "rust",
+  "react",
+  "angular",
+  "vue.js",
+  "node.js",
+  "express.js",
+  "django",
+  "spring boot",
+  "mongodb",
+  "cassandra",
+  "hadoop",
+  "spark",
+  "aws",
+  "azure",
+  "gcp",
+  "network security",
+  "devops",
+  "pandas",
+  "r",
+  "tensorflow",
+  "pytorch",
+  "agile",
+  "scrum",
+  "ux/ui",
+  "seo",
+  "sem",
+  // Add more skills as needed
+];
+function extractSkills(text) {
+  // Split the text by newline characters
+  let lines = text.split(/\n/g);
+
+  // Initialize an array to store extracted skills
+  let extractedSkills = [];
+
+  // Iterate over each line and extract skills
+  for (const line of lines) {
+      // Trim the line and convert to lowercase
+      const trimmedLine = line.trim().toLowerCase();
+
+      // Skip empty lines
+      if (!trimmedLine) continue;
+
+      // Split the line by space or comma characters to extract individual skills
+      const lineSkills = trimmedLine.split(/[ ,]+/);
+
+      // Add extracted skills to the array
+      extractedSkills.push(...lineSkills);
+  }
+
+  // Filter out any empty or duplicate skills
+  extractedSkills = extractedSkills.filter((skill, index, self) => skill && self.indexOf(skill) === index);
+
+  console.log('Extracted Skills:', extractedSkills); // Log extracted skills
+
+  return extractedSkills;
+}
+function determineSpecialties(skills) {
+  // Define specialties based on certain combinations of skills
+  const specialtyMap = {
+      "java": ["Java Developer"],
+      "python": ["Python Developer"],
+      "MongoDB":"", 
+      // Add more specialties as needed
+  };
+
+  // Initialize an empty array to store specialties
+  let specialties = [];
+
+  // Iterate over skills and find matching specialties
+  for (const skill of skills) {
+      if (specialtyMap[skill]) {
+          specialties.push(...specialtyMap[skill]);
+      }
+  }
+
+  // Remove duplicates from specialties array
+  specialties = [...new Set(specialties)];
+
+  return specialties;
+}
+// Main function to handle PDF parsing
+async function main() {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+      const pdfFileName = "cv.pdf"; // Change this to your PDF file name
+      const pdfPath = path.join(__dirname, "..", "uploads", pdfFileName);
+
+      // Read the PDF file as a buffer
+      const pdfBuffer = fs.readFileSync(pdfPath);
+
+      // Call parsePDF function with the buffer
+      await parsePDF(pdfBuffer);
+      console.log("PDF parsing completed.");
+  } catch (error) {
+      console.error("Error:", error);
+  }
+}
+
+// Call the main function
+main();

@@ -34,6 +34,7 @@ isBanned: {
 
 specialite: {
 type: String,
+required: true,
 },
 
 
