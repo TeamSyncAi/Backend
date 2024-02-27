@@ -9,7 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-
+import reclamationRoute from '../Backend/routes/reclamationRoute.js';
+import reportRoute from '../Backend/routes/reportRoute.js'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import { notFoundError, errorHandler } from './middlewares/error-handler.js';
@@ -34,7 +35,8 @@ app.use(notFoundError);
 app.use(errorHandler);
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
+app.use('/reclamation',reclamationRoute);
+app.use('/report',reportRoute);
 mongoose.connect('mongodb+srv://yassineezzar:0000@cluster0.2aohdjo.mongodb.net/?retryWrites=true&w=majority')
   .then(() => {
     console.log('Connected to MongoDB');
