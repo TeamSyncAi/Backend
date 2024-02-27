@@ -1,4 +1,5 @@
 import express from 'express';
+
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
@@ -48,3 +49,4 @@ mongoose.connect('mongodb+srv://yassineezzar:0000@cluster0.2aohdjo.mongodb.net/?
 app.listen(3000, () => {
   console.log('Node app is running on port 3000');
 });
+
