@@ -1,16 +1,17 @@
-// planningRoute.js
-
 import { Router } from 'express';
+import { Projet } from '../models/planningModel.js';
+import { planifierTaches } from '../controllers/planningController';
+
 const router = Router();
-import { createTask, updateTask, deleteTask } from '../controllers/planningController.js';
+router.get('/projets', async (req, res) => {
+  try {
+    const projets = await Projet.find();
+    res.json(projets);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+router.post('/:id_projet', planifierTaches);
 
-// Route pour créer une nouvelle tâche
-router.post('/createtasks', createTask);
-
-// Route pour mettre à jour une tâche avec l'IA
-router.put('/updatetasks/:id', updateTask);
-
-// Route pour supprimer les tâches terminées
-router.delete('/tasks/completed', deleteTask);
 
 export default router;

@@ -1,0 +1,65 @@
+
+import Projet from '../models/planningModel.js';
+
+// Méthode pour récupérer tous les projets du calendrier
+export async function getAllProjects(req, res) {
+    try {
+        const projets = await Projet.find();
+        res.status(200).json(projets);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+//  créer un nouveau projet dans le calendrier
+export async function createProject(req, res) {
+    const projet = new Projet({
+        idProject: req.body.idProject,
+        duree_par_jour: req.body.duree_par_jour,
+        taches: req.body.taches
+    });
+
+    try {
+        const newProject = await projet.save();
+        res.status(201).json(newProject);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
+export async function updateProject(req, res) {
+    const { id } = req.params;
+    try {
+        console.log("ID du projet à mettre à jour :", id); 
+        console.log("Nouvelles données du projet :", req.body); 
+        const updatedProject = await Projet.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updatedProject) {
+            console.log("Le projet avec l'ID spécifié n'a pas été trouvé.");
+            return res.status(404).json({ message: "Le projet avec l'ID spécifié n'a pas été trouvé." });
+        }
+        console.log("Projet mis à jour :", updatedProject);
+        res.status(200).json(updatedProject);
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du projet :", error); 
+        res.status(400).json({ message: error.message });
+    }
+}
+
+
+
+export async function deleteProject(req, res) {
+    const { id } = req.params;
+    try {
+        console.log("ID du projet à supprimer :", id); 
+        const deletedProject = await Projet.findByIdAndDelete(id);
+        if (!deletedProject) {
+            console.log("Le projet avec l'ID spécifié n'a pas été trouvé."); 
+            return res.status(404).json({ message: "Le projet avec l'ID spécifié n'a pas été trouvé." });
+        }
+        console.log("Projet supprimé :", deletedProject); 
+        res.status(204).end();
+    } catch (error) {
+        console.error("Erreur lors de la suppression du projet :", error); 
+        res.status(400).json({ message: error.message });
+    }
+}
+

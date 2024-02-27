@@ -1,29 +1,16 @@
-// planningModel.js
-
 import { Schema, model } from 'mongoose';
 
-// Schéma MongoDB pour une tâche
-const TaskSchema = new Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    
-    complexity: {
-        type: Number,
-        required: true
-    },
-    size: {
-        type: Number,
-        required: true
-    }
+const tacheSchema = new Schema({
+  nom: String,
+  complexite: String,
+  taille: String
 });
 
-// Modèle MongoDB pour une tâche
-const Task = model('Task', TaskSchema);
+const projetSchema = new Schema({
+  nom: String,
+  duree_par_jour: Number,
+  taches: [tacheSchema]
+});
 
-export default Task;
+export const Projet = model('Projet', projetSchema);
+export default Projet;
