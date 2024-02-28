@@ -12,7 +12,7 @@ import { PdfReader } from "pdfreader";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
-
+import Specialty from '../models/specialty.js';
 dotenv.config();
 
 export async function createAccountClient(req, res) {
@@ -371,6 +371,23 @@ export  async function ProfilePicUpload (req,res,next){
 
   
 };
+
+export async function getAllspecialite(req,res,next){
+  try {
+    const specialite = await Specialty.find();
+    res.status(200).json(specialite);
+} catch (error) {
+    res.status(500).json({ error: error.message });
+}
+
+}
+
+
+
+
+
+
+
 
 export async function extractSkillsFromUploadedPDF(req, res) {
   try {

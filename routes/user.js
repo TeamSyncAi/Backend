@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 import multer from 'multer';
 import  User  from '../models/user.js';
-import { createAccountClient,  updateUser , authenticateClient, authenticateClientSub, getUserIdByEmail, displayAllUsers, displayUserProfile, banUser, getUserById, deleteUser, sendActivationCode, forgotPassword, changePassword,verifyCode,ProfilePicUpload,parsePDF } from '../controllers/user.js';
+import { createAccountClient,  updateUser , authenticateClient, authenticateClientSub, getUserIdByEmail, displayAllUsers, displayUserProfile, banUser, getUserById, deleteUser, sendActivationCode, forgotPassword, changePassword,verifyCode,getAllspecialite,ProfilePicUpload,parsePDF } from '../controllers/user.js';
 import { auth } from '../middlewares/auth.js'; 
 import { body } from 'express-validator';
 
@@ -45,6 +45,11 @@ router.post('/verify', verifyCode);
 router
   .route('/updatePicture')
   .patch(auth,ProfilePicUpload);
+
+
+  router
+  .route('/Speicialities')
+  .get(getAllspecialite)
 
 
 // Set up multer instance

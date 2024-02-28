@@ -31,10 +31,10 @@ isBanned: {
     type: Boolean, 
     default: false },
 
-    picture: { type: String, required : false },
+ picture: { type: String, required : false },
     
 
-specialite: {
+specialty: {
 type: String,
 required: true,
 },
