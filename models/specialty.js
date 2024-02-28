@@ -1,5 +1,5 @@
   
-import mongoose from 'mongoose';
+/*import mongoose from 'mongoose';
 
 const specialtySchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -8,4 +8,4 @@ const specialtySchema = new mongoose.Schema({
 
 const Specialty = mongoose.model('Specialty', specialtySchema);
 
-export default Specialty;
+export default Specialty;*/

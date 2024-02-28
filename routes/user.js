@@ -52,9 +52,9 @@ router
   .get(getAllspecialite)
 
 
-// Set up multer instance
 
-// Define route for parsing PDF
+
+
 router.post('/parse-pdf', upload.single('cv'), async (req, res) => {
   try {
     // Vérifiez si un fichier a été téléchargé

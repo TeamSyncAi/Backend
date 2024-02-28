@@ -12,7 +12,7 @@ import { PdfReader } from "pdfreader";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
-import Specialty from '../models/specialty.js';
+//import Specialty from '../models/specialty.js';
 dotenv.config();
 
 export async function createAccountClient(req, res) {
@@ -91,22 +91,42 @@ res.status(500).send('Server Error');
   }
 
   export async function authenticateClient(req, res) {
-    const { username, password } = req.body;
+     User.findOne({ username: req.body.username })
+      .then(user => {
+          if (!user) {
+              return res.status(401).json({ message: 'User is not registered' });
+          }
 
-    try {
-      const user = await User.findByCredentials(username, password);
-  
-      if (user.isBanned) {
-        return res.status(403).json({ error: 'User is banned. Cannot login' });
-      }
-  
-      const token = await user.generateAuthToken();
-      res.status(200).json({ message: 'Login successful', user, token });
-    } catch (error) {
-      console.error('Login error:', error);
-      res.status(401).json({ error: error.message });
-    }
-  }
+          bcrypt.compare(req.body.password, user.password)
+              .then(valid => {
+                  if (!valid) {
+                      return res.status(401).json({ message: 'Password or username incorrect' });
+                  } else {
+                      const maxAge = 1 * 60 * 60;
+                      const token = jwt.sign(
+                          { userId: user._id, role: user.role },
+                          "" + process.env.JWT_SECRET,
+                          { expiresIn: maxAge } // 1hr in sec
+                      );
+                      res.cookie("jwt", token, {
+                          httpOnly: true,
+                          maxAge: maxAge * 1000, // 1hr in ms
+                          Secure: true,
+                      });
+
+                      res.status(200).json(user);
+                  }
+              })
+              .catch(error => {
+                  console.error('Error in bcrypt.compare:', error);
+                  res.status(500).json({ error: 'Internal Server Error' });
+              });
+      })
+      .catch(error => {
+          console.error('Error in User.findOne:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      });
+}
 
 
   export async function authenticateClientSub(req, res) {
