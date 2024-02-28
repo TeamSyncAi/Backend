@@ -3,9 +3,11 @@ const router = express.Router();
 import multer from 'multer';
 import  User  from '../models/user.js';
 import { createAccountClient,  updateUser , authenticateClient, authenticateClientSub, getUserIdByEmail, displayAllUsers, displayUserProfile, banUser, getUserById, deleteUser, sendActivationCode, forgotPassword, changePassword,verifyCode,ProfilePicUpload,parsePDF } from '../controllers/user.js';
+import { auth } from '../middlewares/auth.js'; 
 import { body } from 'express-validator';
 
-const storage = multer.memoryStorage(); // Store the file in memory
+
+const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 
 
@@ -40,7 +42,9 @@ router.post('/reset', sendActivationCode);
 router.post('/forgot', forgotPassword);
 router.put('/change', changePassword);
 router.post('/verify', verifyCode);
-router.post('/updatePicture', ProfilePicUpload);
+router
+  .route('/updatePicture')
+  .patch(auth,ProfilePicUpload);
 
 
 // Set up multer instance

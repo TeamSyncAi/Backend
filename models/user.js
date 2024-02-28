@@ -30,6 +30,8 @@ resetCode: {
 isBanned: { 
     type: Boolean, 
     default: false },
+
+    picture: { type: String, required : false },
     
 
 specialite: {

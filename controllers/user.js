@@ -561,7 +561,7 @@ function determineSpecialties(skills) {
 
   return specialties;
 }
-// Main function to handle PDF parsing
+
 async function main() {
   try {
     const __filename = fileURLToPath(import.meta.url);
@@ -580,5 +580,5 @@ async function main() {
   }
 }
 
-// Call the main function
+
 main();
