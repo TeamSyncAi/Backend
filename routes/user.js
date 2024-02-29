@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 import multer from 'multer';
 import  User  from '../models/user.js';
-import { createAccountClient,  updateUser , authenticateClient, authenticateClientSub, getUserIdByEmail, displayAllUsers, displayUserProfile, banUser, getUserById, deleteUser, sendActivationCode, forgotPassword, changePassword,verifyCode,getAllspecialite,ProfilePicUpload,parsePDF } from '../controllers/user.js';
+import { createAccountClient,  updateUser , authenticateClient, authenticateClientSub,verifyOtp,sendOTP, getUserIdByEmail, displayAllUsers, displayUserProfile, banUser, getUserById, deleteUser, sendActivationCode, forgotPassword, changePassword,verifyCode,getAllspecialite,ProfilePicUpload,parsePDF } from '../controllers/user.js';
 import { auth } from '../middlewares/auth.js'; 
 import { body } from 'express-validator';
 
@@ -15,14 +15,24 @@ const upload = multer({ storage: storage });
 router.post('/registerclient', [
   body('username').notEmpty().withMessage('Username is required'),
   body('email').isEmail().withMessage('Invalid email'),
+  body('numTel').notEmpty().withMessage('numTel is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
 ], createAccountClient);
+
 
 /*router.post('/registerclientSub', [
   body('UserName').notEmpty().withMessage('Username is required'),
   body('email').isEmail().withMessage('Invalid email'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
 ], createAccountClientSub);*/
+
+router
+  .route('/sendOTP')
+  .post(sendOTP)
+
+  router
+  .route('/verifyOTP')
+  .post(verifyOtp)
 
 router.put('/:id/update', updateUser);
 

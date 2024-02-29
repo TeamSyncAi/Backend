@@ -18,6 +18,8 @@ required: true,
 unique: true,
 },
 
+numTel: { type: Number, required: true ,unique:true },
+
 password: {
 type: String,
 required: true,
@@ -31,7 +33,7 @@ isBanned: {
     type: Boolean, 
     default: false },
 
- picture: { type: String, required : false },
+ 
     
 
 specialty: {

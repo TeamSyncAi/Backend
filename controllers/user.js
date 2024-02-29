@@ -13,6 +13,12 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
 //import Specialty from '../models/specialty.js';
+import { sendSMS } from '../utils/smsSender.js';
+import otpGenerator from 'otp-generator';
+import Otp from '../models/otp.js';
+
+
+
 dotenv.config();
 
 export async function createAccountClient(req, res) {
@@ -26,6 +32,7 @@ export async function createAccountClient(req, res) {
     const newUser = await User.create({
       username: req.body.username,
       email: req.body.email,
+      numTel: req.body.numTel,
       password: req.body.password,
       Role: 'Client', 
      
@@ -146,6 +153,71 @@ res.status(500).send('Server Error');
       res.status(401).json({ error: error.message });
     }
   }
+
+  export async function sendOTP(req,res,next){
+    try {
+      const numTelRegex = /^\d{8}$/;
+      if (!numTelRegex.test(req.body.numTel)) {
+        return res.status(400).json({ message: "Invalid numTel format. Please enter 8 digits." });
+      }
+      const existingUser = await User.findOne(
+        { numTel: req.body.numTel },
+      );
+  
+      if (existingUser) {
+        return res.status(400).json({ message: "It seems you already have an account, please log in instead." });
+      }
+      const otp = otpGenerator.generate(6,{
+        secret: process.env.JWT_SECRET,
+        digits: 6,
+        algorithm: 'sha256',
+        epoch: Date.now(),
+        upperCaseAlphabets: false, specialChars: false,
+        lowerCaseAlphabets: false,
+    });
+          const otpDocument = new Otp({
+              userId: req.body.numTel, 
+              otp
+          });
+  
+          await otpDocument.save();
+          const Tnumtel ="+216" + req.body.numTel
+          sendSMS(Tnumtel,otp)
+          res.status(200).json({ message: "OTP Sent"});
+  
+  } catch (error) {
+      console.error('Error generating OTP:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+  }
+
+
+export async function verifyOtp(req, res, next) {
+    try {
+      const { numTel, otp } = req.body;
+      const otpDocument = await Otp.findOne({ userId: numTel });
+  
+      if (!otpDocument) {
+        return res.status(404).json({ error: 'OTP not found' });
+      }
+  
+      if (otp === otpDocument.otp) {
+        
+        await otpDocument.deleteOne();
+  
+        return res.status(200).json({ message: 'OTP verified' });
+      } else {
+        return res.status(401).json({ error: 'Invalid OTP' });
+      }
+    } catch (error) {
+      console.error('Error in verifyOtp:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+  
+
+
+
 
 
 
