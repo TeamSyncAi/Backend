@@ -104,11 +104,11 @@ Content-Type: application/json
 GET http://localhost:3000/uploads/INSERT_FILENAME_HERE.jpg
 
 
-POST http://localhost:3000/user/updatePicture
+PATCH http://localhost:3000/user/updatePicture
 Content-Type: multipart/form-data
 
 Content-Disposition: form-data; name="picture"; filename="profile-picture.jpg"
 Content-Type: image/jpeg
 GET http://localhost:3000/logout
 
-POST http://localhost:3000/parse-pdf
+POST http://localhost:3000/user/parse-pdf
