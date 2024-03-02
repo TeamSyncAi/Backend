@@ -31,6 +31,7 @@ Content-Type: application/json
 {
   "username": "newUsername",
   "email": "newEmail@example.com",
+  "numTel": "12345678",
   "password": "newPassword",
   "role": "Client"
 }

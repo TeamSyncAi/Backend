@@ -68,12 +68,13 @@ export async function createAccountClient(req, res) {
 
 
   export async function updateUser(req, res) {
-  const { username, email, password, role } = req.body;
+  const { username, email,numTel, password, role } = req.body;
 
 
 const userFields = {};
 if (username) userFields.username = username;
 if (email) userFields.email = email;
+if (numTel) userFields.numTel = numTel;
 if (password) userFields.password = password;
 if (role) userFields.role = role;
 
@@ -397,6 +398,37 @@ export async function forgotPassword(req, res){
       res.status(500).json({ message: "Passwords don't match" });
     }
   }
+  /*export async function forgetPasssword(req,res,next){
+
+    try{
+      User.findOne({ numTel: req.body.numTel })
+      .then(user => {
+          if (!user) {
+              return res.status(401).json({ message: 'User is not registered' });
+          }
+          const otp = otpGenerator.generate(6,{
+            secret: process.env.JWT_SECRET,
+            digits: 6,
+            algorithm: 'sha256',
+            epoch: Date.now(),
+            upperCaseAlphabets: false, specialChars: false,
+            lowerCaseAlphabets: false,
+        });
+        const otpDocument = new Otp({
+          userId: req.body.numTel, 
+          otp,
+        });
+         otpDocument.save();
+        return res.status(200).json({otp})
+          
+        })
+    }
+        catch(error) {
+          console.error('Error in User.findOne:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      };
+  }*/
+
 
   export async function changePassword(req, res){
     const { email, newPassword, confirmPassword, oldPassword } = req.body;
