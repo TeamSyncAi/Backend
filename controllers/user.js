@@ -16,7 +16,7 @@ import { readFileSync } from 'fs';
 import { sendSMS } from '../utils/smsSender.js';
 import otpGenerator from 'otp-generator';
 import Otp from '../models/otp.js';
-
+import { sendEmail } from '../utils/mailSender.js';
 
 
 dotenv.config();
