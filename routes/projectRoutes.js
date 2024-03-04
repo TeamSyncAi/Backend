@@ -1,21 +1,43 @@
 import axios from 'axios';
+import Project from '../models/Project.js';
 
-export const createProject = (req, res) => {
-  const { name, startDate, endDate, description, keywords, members, teamLeader } = req.body;
-  
-  const projectData = {
-    name,
-    description,
-    keywords
-  };
+export function createProject(req, res) {
+    const { name, startDate, endDate, description, keywords, members, teamLeader } = req.body;
 
-  axios.post('http://127.0.0.1:5000/generate_project_modules', projectData)
-    .then(response => {
-      console.log('Generated modules:', response.data.modules);
-      res.json(response.data.modules); 
+    // Create a new project document
+    Project.create({
+        name,
+        startDate,
+        endDate,
+        description,
+        keywords
+    })
+    .then(savedProject => {
+        console.log('Project saved successfully:', savedProject);
+
+        // Extract the _id from the saved project
+        const projectData = {
+            _id: savedProject._id,
+            name,
+            startDate,
+            endDate,
+            description,
+            keywords
+        };
+
+        // Now, generate project modules
+        axios.post('http://127.0.0.1:5000/generate_project_modules', projectData)
+            .then(response => {
+                console.log('Server Response:', response); 
+                res.json({ project: savedProject, modules: response.data.modules });
+            })
+            .catch(error => {
+                console.error('Error generating project modules:', error);
+                res.status(500).json({ error: 'Error generating project modules' });
+            });
     })
     .catch(error => {
-      console.error('Error generating project modules:', error);
-      res.status(500).json({ error: 'Error generating project modules' });
+        console.error('Error saving project:', error);
+        res.status(500).json({ error: 'Error saving project' });
     });
-};
+}

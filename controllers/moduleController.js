@@ -3,12 +3,12 @@ import Task from '../models/Task.js';
 
 export async function receiveModules(req, res) {
     try {
-        const modulesData = req.body.modules;
+        const { projectID, modules } = req.body;
 
-        for (const moduleData of modulesData) {
+        for (const moduleData of modules) {
             const { module_name, tasks } = moduleData;
             
-            const newModule = new Module({ module_name });
+            const newModule = new Module({ module_name, projectID });
             await newModule.save();
 
             for (const task of tasks) {
