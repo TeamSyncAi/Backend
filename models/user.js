@@ -46,6 +46,22 @@ picture: { type: String, required : false },
 
 });
 
+userSchema.statics.updateSkills = async function(userId, skills) {
+  try {
+    // Trouvez l'utilisateur par son ID
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    // Mettez à jour les compétences de l'utilisateur
+    user.specialty = skills.join(', '); // Convertissez le tableau de compétences en une chaîne séparée par des virgules
+    await user.save(); // Sauvegardez les modifications dans la base de données
+    return user; // Renvoyez l'utilisateur mis à jour
+  } catch (error) {
+    throw new Error('Failed to update user skills');
+  }
+};
+
 
 userSchema.methods.generateAuthToken = function () {
 try {

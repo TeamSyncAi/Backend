@@ -63,7 +63,25 @@ router
 
 
 
-
+  router.post('/update-skills', async (req, res) => {
+    try {
+      const { userId, skills } = req.body;
+  
+      // Vérifiez si userId et skills sont présents dans le corps de la requête
+      if (!userId || !skills) {
+        return res.status(400).json({ message: 'Missing userId or skills in request body' });
+      }
+  
+      // Appelez la méthode updateSkills du modèle User pour mettre à jour les compétences de l'utilisateur
+      const updatedUser = await User.updateSkills(userId, skills);
+  
+      // Répondez avec l'utilisateur mis à jour
+      res.status(200).json({ message: 'User skills updated successfully', user: updatedUser });
+    } catch (error) {
+      console.error('Error updating user skills:', error);
+      res.status(500).json({ error: 'Failed to update user skills' });
+    }
+  });
 
 router.post('/parse-pdf', upload.single('cv'), async (req, res) => {
   try {
@@ -75,6 +93,10 @@ router.post('/parse-pdf', upload.single('cv'), async (req, res) => {
     // Appelez la fonction parsePDF en passant le buffer du fichier
     const skills = await parsePDF(req.file.buffer);
 
+    // Mettez à jour les compétences de l'utilisateur avec les compétences extraites
+    const userId = req.user.id; // Obtenez l'ID de l'utilisateur à partir de la demande
+    await User.updateSkills(userId, skills);
+
     // Envoyez les compétences extraites en réponse
     res.status(200).json({ skills: skills });
   } catch (error) {
@@ -83,6 +105,7 @@ router.post('/parse-pdf', upload.single('cv'), async (req, res) => {
     res.status(500).send("An error occurred while parsing the PDF.");
   }
 });
+
 export default router;
 
 

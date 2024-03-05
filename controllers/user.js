@@ -515,15 +515,15 @@ export async function getAllspecialite(req,res,next){
 
 export async function extractSkillsFromUploadedPDF(req, res) {
   try {
-    // Handle potential absence of PDF file gracefully
+    
     const form = formidable({ multiples: false });
     const files = await new Promise((resolve, reject) => {
       form.parse(req, (err, fields, files) => {
         if (err) {
           console.error("Error parsing form data:", err);
-          // Log the error but don't generate an error response
+          
           reject(err);
-          return; // Skip to the response below
+          return; 
         }
         resolve(files);
       });
@@ -531,13 +531,13 @@ export async function extractSkillsFromUploadedPDF(req, res) {
 
     const pdfFile = files.file;
 
-    // Check if PDF file exists and respond accordingly
+    
     if (!pdfFile) {
-      return res.status(400).json({ message: "No PDF file uploaded" }); // Informative message
+      return res.status(400).json({ message: "No PDF file uploaded" }); 
     }
 
-    // Handle file path and permissions (you need to implement this)
-    // ...
+    
+    
 
     try {
       const pdfBytes = await pdfFile.buffer();
@@ -545,11 +545,11 @@ export async function extractSkillsFromUploadedPDF(req, res) {
       try {
         const pdfText = await parse(pdfBytes);
 
-        const skills = await extractSkillInformation(pdfText); // Implement this function
+        const skills = await extractSkillInformation(pdfText); 
 
-        // Create a new user with the extracted skills
+      
         const newUser = await User.create({
-          specialite: skills // Assuming 'specialite' is the field to store skills in the User model
+          specialite: skills 
         });
 
         console.log('New user created:', newUser);
@@ -565,7 +565,7 @@ export async function extractSkillsFromUploadedPDF(req, res) {
     }
   } catch (error) {
     console.error("Unexpected error:", error);
-    return res.status(500).json({ error: "An unexpected error occurred" }); // Generic error message
+    return res.status(500).json({ error: "An unexpected error occurred" }); 
   }
 }
 

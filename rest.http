@@ -129,3 +129,11 @@ Content-Type: image/jpeg
 GET http://localhost:3000/logout
 
 POST http://localhost:3000/user/parse-pdf
+
+
+POST http://localhost:3000/user/update-skills
+
+{
+  "userId": "your_user_id_here",
+  "skills": ["skill1", "skill2", "skill3"]
+}
