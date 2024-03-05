@@ -509,7 +509,7 @@ export async function getAllspecialite(req,res,next){
 
 
 export async function getUserSkillsById(req, res) {
-  const userId = req.params.userId; // Assuming the user ID is passed in the request parameters
+  const userId = req.params.userId;
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -527,15 +527,15 @@ export async function getUserSkills(req, res) {
   try {
     const userId = req.params.userId;
 
-    // Retrieve the user from the database by ID
+   
     const user = await User.findById(userId);
 
-    // Check if user exists
+    
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Return the user's skills
+  
     res.status(200).json({ skills: user.specialty });
   } catch (error) {
     console.error('Error fetching user skills:', error);
