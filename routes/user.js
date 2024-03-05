@@ -106,6 +106,27 @@ router.post('/parse-pdf', upload.single('cv'), async (req, res) => {
   }
 });
 
+
+
+router.get('/user-skills/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Retrieve the user from the database by ID
+    const user = await User.findById(userId);
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return the user's skills
+    res.status(200).json({ skills: user.specialty });
+  } catch (error) {
+    console.error('Error fetching user skills:', error);
+    res.status(500).json({ error: 'Failed to fetch user skills' });
+  }
+});
 export default router;
 
 

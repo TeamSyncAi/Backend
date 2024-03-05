@@ -508,8 +508,40 @@ export async function getAllspecialite(req,res,next){
 
 
 
+export async function getUserSkillsById(req, res) {
+  const userId = req.params.userId; // Assuming the user ID is passed in the request parameters
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const userSkills = user.specialty;
+    return res.status(200).json({ userId: userId, skills: userSkills });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
 
+export async function getUserSkills(req, res) {
+  try {
+    const userId = req.params.userId;
 
+    // Retrieve the user from the database by ID
+    const user = await User.findById(userId);
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return the user's skills
+    res.status(200).json({ skills: user.specialty });
+  } catch (error) {
+    console.error('Error fetching user skills:', error);
+    res.status(500).json({ error: 'Failed to fetch user skills' });
+  }
+}
 
 
 
