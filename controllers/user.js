@@ -577,10 +577,11 @@ export async function parsePDF(pdfBuffer) {
               reject(err);
               return;
           } else if (!item) {
-              // Return extracted skills when end of file is reached
-              resolve(skills);
+             
+              const formattedSkills = skills.join(" ");
+              resolve(formattedSkills);
           } else if (item.text) {
-              // Extract skills from the text
+              
               const extractedSkills = extractSkills(item.text);
               if (extractedSkills.length > 0) {
                   skills = [...skills, ...extractedSkills];
@@ -589,6 +590,7 @@ export async function parsePDF(pdfBuffer) {
       });
   });
 }
+
 const skillList = [
   // Soft skills
   "communication",
@@ -658,26 +660,30 @@ function extractSkills(text) {
 
   // Iterate over each line and extract skills
   for (const line of lines) {
-      // Trim the line and convert to lowercase
-      const trimmedLine = line.trim().toLowerCase();
+    // Trim the line and convert to lowercase
+    const trimmedLine = line.trim().toLowerCase();
 
-      // Skip empty lines
-      if (!trimmedLine) continue;
+    // Skip empty lines
+    if (!trimmedLine) continue;
 
-      // Split the line by space or comma characters to extract individual skills
-      const lineSkills = trimmedLine.split(/[ ,]+/);
+    // Split the line by space or comma characters to extract individual skills
+    const lineSkills = trimmedLine.split(/[ ,]+/);
 
-      // Add extracted skills to the array
-      extractedSkills.push(...lineSkills);
+    // Add extracted skills to the array
+    extractedSkills.push(...lineSkills);
   }
 
   // Filter out any empty or duplicate skills
   extractedSkills = extractedSkills.filter((skill, index, self) => skill && self.indexOf(skill) === index);
 
-  console.log('Extracted Skills:', extractedSkills); // Log extracted skills
+  // Join the individual words into a single string
+  const concatenatedSkills = extractedSkills.join(', ');
 
-  return extractedSkills;
+  console.log('Extracted Skills:', concatenatedSkills); // Log concatenated skills
+
+  return concatenatedSkills;
 }
+
 function determineSpecialties(skills) {
   // Define specialties based on certain combinations of skills
   const specialtyMap = {
