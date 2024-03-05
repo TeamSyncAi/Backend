@@ -592,7 +592,7 @@ export async function parsePDF(pdfBuffer) {
 }
 
 const skillList = [
-  // Soft skills
+  
   "communication",
   "teamwork",
   "problem solving",
@@ -605,7 +605,6 @@ const skillList = [
   "adaptability",
   "attention to detail",
 
-  // Hard skills
   "java",
   "python",
   "javascript",
@@ -617,7 +616,7 @@ const skillList = [
   "linux",
   "machine learning",
 
-  // Additional hard skills
+  
   "php",
   "ruby",
   "go",
@@ -649,61 +648,58 @@ const skillList = [
   "ux/ui",
   "seo",
   "sem",
-  // Add more skills as needed
+
 ];
 function extractSkills(text) {
-  // Split the text by newline characters
+ 
   let lines = text.split(/\n/g);
 
-  // Initialize an array to store extracted skills
+
   let extractedSkills = [];
 
-  // Iterate over each line and extract skills
+
   for (const line of lines) {
-    // Trim the line and convert to lowercase
+  
     const trimmedLine = line.trim().toLowerCase();
 
-    // Skip empty lines
+    
     if (!trimmedLine) continue;
 
-    // Split the line by space or comma characters to extract individual skills
+
     const lineSkills = trimmedLine.split(/[ ,]+/);
 
-    // Add extracted skills to the array
+    
     extractedSkills.push(...lineSkills);
   }
 
-  // Filter out any empty or duplicate skills
+
   extractedSkills = extractedSkills.filter((skill, index, self) => skill && self.indexOf(skill) === index);
 
-  // Join the individual words into a single string
   const concatenatedSkills = extractedSkills.join(', ');
 
-  console.log('Extracted Skills:', concatenatedSkills); // Log concatenated skills
+  console.log('Extracted Skills:', concatenatedSkills); 
 
   return concatenatedSkills;
 }
 
 function determineSpecialties(skills) {
-  // Define specialties based on certain combinations of skills
+  
   const specialtyMap = {
       "java": ["Java Developer"],
       "python": ["Python Developer"],
       "MongoDB":"", 
-      // Add more specialties as needed
+  
   };
 
-  // Initialize an empty array to store specialties
+
   let specialties = [];
 
-  // Iterate over skills and find matching specialties
   for (const skill of skills) {
       if (specialtyMap[skill]) {
           specialties.push(...specialtyMap[skill]);
       }
   }
 
-  // Remove duplicates from specialties array
   specialties = [...new Set(specialties)];
 
   return specialties;
@@ -713,13 +709,13 @@ async function main() {
   try {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-      const pdfFileName = "cv.pdf"; // Change this to your PDF file name
+      const pdfFileName = "cv.pdf"; 
       const pdfPath = path.join(__dirname, "..", "uploads", pdfFileName);
 
-      // Read the PDF file as a buffer
+      
       const pdfBuffer = fs.readFileSync(pdfPath);
 
-      // Call parsePDF function with the buffer
+      
       await parsePDF(pdfBuffer);
       console.log("PDF parsing completed.");
   } catch (error) {
