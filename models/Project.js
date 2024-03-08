@@ -7,6 +7,8 @@ const projectSchema = new mongoose.Schema({
     endDate: Date,
     description: String,
     keywords: [String],
+    teamLeader: String,
+    members: [String]
 });
 
 const Project = mongoose.model('Project', projectSchema);

@@ -10,7 +10,9 @@ export function createProject(req, res) {
         startDate,
         endDate,
         description,
-        keywords
+        keywords,
+        teamLeader,
+        members
     })
     .then(savedProject => {
         console.log('Project saved successfully:', savedProject);
@@ -22,7 +24,9 @@ export function createProject(req, res) {
             startDate,
             endDate,
             description,
-            keywords
+            keywords,
+            teamLeader,
+            members
         };
 
         // Now, generate project modules
