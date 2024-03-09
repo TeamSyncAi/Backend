@@ -1,4 +1,3 @@
-import { response } from 'express';
 import Module from '../models/Module.js';
 import Task from '../models/Task.js';
 
@@ -13,18 +12,19 @@ export async function receiveModules(req, res) {
             await newModule.save();
 
             for (const task of tasks) {
-                const newTask = new Task({ module_id: newModule._id, task_description: task });
+                const newTask = new Task({ module_id: newModule._id, task_description: task.task_name, projectID });
                 await newTask.save();
             }
         }
 
         console.log('Modules saved successfully');
-        res.status(200).json({projectID, message: 'Modules saved successfully' });
+        res.status(200).json({ projectID, message: 'Modules saved successfully' });
     } catch (error) {
         console.error('Error saving modules:', error);
         res.status(500).json({ error: 'Failed to save modules' });
     }
 }
+
 
 
 export async function getModulesByProjectID(req, res) {
@@ -51,12 +51,16 @@ export const updateModule = async (req,res) => {
     }
 }
 
-export const deleteModule = async (req,res) => {
+export const deleteModule = async (req, res) => {
     try {
-        const { id } =req.params;
+        const { id } = req.params;
+
         await Module.findByIdAndDelete(id);
-        res.status(200).json({ message: 'Module deleted'});
+
+        await Task.deleteMany({ module_id: id });
+
+        res.status(200).json({ message: 'Module and associated tasks deleted' });
     } catch (error) {
-        res.status(400).json({ message: error.message});
+        res.status(400).json({ message: error.message });
     }
 }
