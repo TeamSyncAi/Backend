@@ -17,7 +17,14 @@ import { sendSMS } from '../utils/smsSender.js';
 import otpGenerator from 'otp-generator';
 import Otp from '../models/otp.js';
 import { sendEmail } from '../utils/mailSender.js';
-
+import twilio from 'twilio';
+const accountSid = 'ACe1ba384790b795e6f000e81de0a64378'; // Your Twilio Account SID
+const authToken = '7405be7329e898092a54c2f997fa5e5e'; // Your Twilio Auth Token
+const verifySid = 'VAece4a5891c0da464781c834ea63a1d18';
+const twilioPhoneNumber = '+14698046132'; // Your Twilio phone Number
+const phoneNumber= '+21653115231'; 
+const client = twilio(accountSid, authToken);
+const receiver =process.env.TWILIO_PHONE_NUMBER
 
 dotenv.config();
 
@@ -37,7 +44,7 @@ export async function createAccountClient(req, res) {
       Role: 'Client', 
      
     });
-
+    process.env.RESET_PHONE_NUMBER = req.body.numTel;
     console.log('New user created:', newUser);
 
     return res.status(200).json(newUser);
@@ -155,6 +162,64 @@ res.status(500).send('Server Error');
     }
   }
 
+  export async function recoverPasswordByPhoneNumber(req, res) {
+    try {
+      const { phone } = req.body; // Get the phone number from the request
+
+
+
+      // Generate a unique 4-digit OTP code
+      const otpCode = generateOTP();
+
+      // Send the OTP code to the user's phone number using Twilio
+      const smsSent = await sendOTPWithTwilio(phone, otpCode);
+
+
+      if (smsSent) {
+        process.env.PHONE_OTP = otpCode;
+        process.env.RESET_PHONE_NUMBER = phone; // Store phone number in environment variable
+
+        return res.status(200).send({otpCode})
+
+        res.status(200).json({ message: 'OTP code sent to your phone number' });
+      } else {
+        res.status(500).json({ error: 'Error sending OTP code' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+
+
+
+  // Function to generate a unique 4-digit OTP code
+function generateOTP() {
+  // Generate a random 4-digit OTP code
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  return otp.toString();
+}
+
+
+async function sendOTPWithTwilio(phoneNumber, otpCode) {
+  try {
+    // Log the details before sending the message
+    console.log('Sending OTP to:', phoneNumber, 'from:', twilioPhoneNumber);
+
+    // Send the OTP using Twilio
+    await client.messages.create({
+      body: `Your OTP code is: ${otpCode}`,
+      from: twilioPhoneNumber,
+      to: '+21653115231',
+    });
+
+    console.log('OTP sent successfully');
+    return true; // Message sent successfully
+  } catch (error) {
+    console.error('Error sending OTP:', error.message);
+    return false; // Message sending failed
+  }
+}
   export async function sendOTP(req,res,next){
     try {
       const numTelRegex = /^\d{8}$/;

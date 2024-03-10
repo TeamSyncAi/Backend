@@ -18,7 +18,7 @@ required: true,
 unique: true,
 },
 
-numTel: { type: Number, required: true ,unique:true },
+numTel: { type: String, required: true ,unique:true },
 
 password: {
 type: String,
