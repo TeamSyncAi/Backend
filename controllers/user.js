@@ -28,23 +28,31 @@ const receiver =process.env.TWILIO_PHONE_NUMBER
 
 dotenv.config();
 
+
+
 export async function createAccountClient(req, res) {
   try {
-  
     if (!validationResult(req).isEmpty()) {
       console.error('Validation errors:', validationResult(req).array());
       return res.status(400).json({ errors: validationResult(req).array() });
     }
 
+    // Create the user object
     const newUser = await User.create({
       username: req.body.username,
       email: req.body.email,
       numTel: req.body.numTel,
       password: req.body.password,
-      Role: 'Client', 
-     
+      Role: 'Client',
     });
-    process.env.RESET_PHONE_NUMBER = req.body.numTel;
+
+    // Parse the uploaded PDF and extract skills
+    const pdfBuffer = req.file.buffer; // Assuming the PDF file is uploaded as 'file' in the request
+    const skills = await extractSkillsFromPDF(pdfBuffer);
+
+    // Update the user's skills
+    await User.updateSkills(newUser._id, skills);
+
     console.log('New user created:', newUser);
 
     return res.status(200).json(newUser);
@@ -612,57 +620,37 @@ export async function getUserSkills(req, res) {
 
 export async function extractSkillsFromUploadedPDF(req, res) {
   try {
-    
-    const form = formidable({ multiples: false });
-    const files = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) {
-          console.error("Error parsing form data:", err);
-          
-          reject(err);
-          return; 
-        }
-        resolve(files);
-      });
+    if (!validationResult(req).isEmpty()) {
+      console.error('Validation errors:', validationResult(req).array());
+      return res.status(400).json({ errors: validationResult(req).array() });
+    }
+
+    // Check if a PDF file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: 'No PDF file uploaded' });
+    }
+
+    // Parse the uploaded PDF and extract skills
+    const pdfBuffer = req.file.buffer;
+    const pdfText = await parsePDF(pdfBuffer);
+    const skills = extractSkills(pdfText);
+
+    // Update the user's skills
+    const newUser = await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      numTel: req.body.numTel,
+      password: req.body.password,
+      Role: 'Client',
+      specialty: skills.join(', '), // Store the extracted skills in the user's specialty field
     });
 
-    const pdfFile = files.file;
+    console.log('New user created:', newUser);
 
-    
-    if (!pdfFile) {
-      return res.status(400).json({ message: "No PDF file uploaded" }); 
-    }
-
-    
-    
-
-    try {
-      const pdfBytes = await pdfFile.buffer();
-
-      try {
-        const pdfText = await parse(pdfBytes);
-
-        const skills = await extractSkillInformation(pdfText); 
-
-      
-        const newUser = await User.create({
-          specialite: skills 
-        });
-
-        console.log('New user created:', newUser);
-
-        return res.status(200).json(newUser);
-      } catch (error) {
-        console.error("Error parsing PDF:", error);
-        return res.status(500).json({ error: "Failed to extract skills" });
-      }
-    } catch (error) {
-      console.error("Error reading file buffer:", error);
-      return res.status(500).json({ error: "Failed to extract skills" });
-    }
+    return res.status(200).json(newUser);
   } catch (error) {
-    console.error("Unexpected error:", error);
-    return res.status(500).json({ error: "An unexpected error occurred" }); 
+    console.error('Error extracting skills from PDF:', error);
+    return res.status(500).json({ error: 'Failed to extract skills from PDF' });
   }
 }
 
@@ -748,35 +736,12 @@ const skillList = [
 
 ];
 function extractSkills(text) {
- 
-  let lines = text.split(/\n/g);
+  const words = text.match(/\b\w+\b/g); // Split text into words
+  if (!words) return []; // Return empty array if no words found
 
-
-  let extractedSkills = [];
-
-
-  for (const line of lines) {
-  
-    const trimmedLine = line.trim().toLowerCase();
-
-    
-    if (!trimmedLine) continue;
-
-
-    const lineSkills = trimmedLine.split(/[ ,]+/);
-
-    
-    extractedSkills.push(...lineSkills);
-  }
-
-
-  extractedSkills = extractedSkills.filter((skill, index, self) => skill && self.indexOf(skill) === index);
-
-  const concatenatedSkills = extractedSkills.join(', ');
-
-  console.log('Extracted Skills:', concatenatedSkills); 
-
-  return concatenatedSkills;
+  const uniqueSkills = [...new Set(words.map(word => word.toLowerCase()))]; // Convert to lowercase and remove duplicates
+  console.log('Extracted Skills:', uniqueSkills.join(', ')); // Log extracted skills
+  return uniqueSkills;
 }
 
 function determineSpecialties(skills) {
