@@ -10,7 +10,7 @@ const reclamationSchema = new Schema({
     type: String,
     required: true
   },
-  description: {
+  date: {
     type: Date,
     required: true
   },
