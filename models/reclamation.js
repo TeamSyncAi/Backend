@@ -22,7 +22,7 @@ const reclamationSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ['ideas and suggestions', 'Reporting problems', 'Task and project management','Support Requests','Feedback','Health'],
+    enum: ['ideas and suggestions', 'reporting problems', 'task and project management','support Requests','feedback','health'],
     
   },
   /*responsable: {

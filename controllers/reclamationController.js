@@ -46,24 +46,26 @@ export function deleteAllReclamation(req, res) {
     });
 }
 
-export function getOnceReclamation(req, res) {
-  Reclamation.findOne({ _id: req.params._id })
-    .then((docs) => {
-      res.status(200).json(docs);
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err });
-    })
-}
+
+const validTypes = ['ideas and suggestions', 'reporting problems', 'task and project management', 'support requests', 'feedback', 'health'];
+
 export function getByType(req, res) {
-  Reclamation.findOne({ type: req.params.type })
-    .then((docs) => {
-      res.status(200).json(docs);
+  const type = req.params.type.toLowerCase();
+  if (!validTypes.includes(type)) {
+    return res.status(400).json({ error: 'Type invalide' });
+  }
+
+  Reclamation.find({ type: type })
+    .then((reclamations) => {
+      console.log("Fetched reclamations:", reclamations); 
+      res.status(200).json(reclamations);
     })
     .catch((err) => {
-      res.status(500).json({ error: err });
-    })
+      res.status(500).json({ error: err.message });
+    });
 }
+
+
 
 
 export function deleteOnceReclamation(req, res) {

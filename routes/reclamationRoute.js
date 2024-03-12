@@ -1,6 +1,7 @@
 import express from "express";
-import { addReclamation,getByType, getAllReclamation,deleteAllReclamation, getOnceReclamation, deleteOnceReclamation,UpdateReclamation} from "../controllers/reclamationController.js";
+import { addReclamation,getByType, getAllReclamation,deleteAllReclamation, deleteOnceReclamation,UpdateReclamation} from "../controllers/reclamationController.js";
 const router = express.Router();
+
 
 router
 .route("/")
@@ -11,12 +12,12 @@ router
 
 router
 .route("/:_id")
-.get(getOnceReclamation)
 .delete(deleteOnceReclamation)
 .put(UpdateReclamation);
 router
-route("/:type")
-.get(getByType)
+.route("/type/:type")
+.get(getByType);
+
 
 
 export default router;
