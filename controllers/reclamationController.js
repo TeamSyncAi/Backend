@@ -3,12 +3,14 @@ import Reclamation from '../models/reclamation.js';
 
 
 export function addReclamation(req, res) {
-  const statutValue = req.body.statut || 'En attente';
-  
+  const statutValue = req.body.statut || 'In progress';
+  const typesValue = 
   Reclamation.create({
-    titre:req.body.titre,
+    title:req.body.title,
     description:req.body.description,
-    statut:statutValue,
+    status:statutValue,
+    date:date,
+    type:typesValue,
     /*responsable,
     utilisateur,*/
     

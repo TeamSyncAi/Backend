@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const { Schema, model, Types } = mongoose;
 
 const reclamationSchema = new Schema({
-    titre: {
+    title: {
     type: String,
     required: true
   },
@@ -10,11 +10,20 @@ const reclamationSchema = new Schema({
     type: String,
     required: true
   },
+  description: {
+    type: Date,
+    required: true
+  },
   
-  statut: {
+  status: {
     type: String,
-    enum: ['En attente', 'En cours', 'Résolue'],
+    enum: ['In progress', 'Accepted', 'Rejected'],
     default: 'En attente'
+  },
+  type: {
+    type: String,
+    enum: ['ideas and suggestions', 'Reporting problems', 'Rejected'],
+    
   },
   /*responsable: {
     type: mongoose.Schema.Types.ObjectId,
