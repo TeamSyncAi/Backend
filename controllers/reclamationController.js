@@ -4,8 +4,8 @@ import Reclamation from '../models/reclamation.js';
 
 export function addReclamation(req, res) {
   const statutValue = req.body.statut || 'In progress';
-  const typesValue = 
-  Reclamation.create({
+  const typesValue = req.body.type
+    Reclamation.create({
     title:req.body.title,
     description:req.body.description,
     status:statutValue,
