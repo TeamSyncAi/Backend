@@ -1,5 +1,5 @@
 import express from "express";
-import { addReclamation, getAllReclamation,deleteAllReclamation, getOnceReclamation, deleteOnceReclamation,UpdateReclamation} from "../controllers/reclamationController.js";
+import { addReclamation,getByType, getAllReclamation,deleteAllReclamation, getOnceReclamation, deleteOnceReclamation,UpdateReclamation} from "../controllers/reclamationController.js";
 const router = express.Router();
 
 router
@@ -14,5 +14,9 @@ router
 .get(getOnceReclamation)
 .delete(deleteOnceReclamation)
 .put(UpdateReclamation);
+router
+route("/:type")
+.get(getByType)
+
 
 export default router;

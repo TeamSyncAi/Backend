@@ -55,6 +55,15 @@ export function getOnceReclamation(req, res) {
       res.status(500).json({ error: err });
     })
 }
+export function getByType(req, res) {
+  Reclamation.findOne({ type: req.params.type })
+    .then((docs) => {
+      res.status(200).json(docs);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    })
+}
 
 
 export function deleteOnceReclamation(req, res) {
