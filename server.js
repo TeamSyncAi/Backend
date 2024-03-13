@@ -58,7 +58,7 @@ import reportRoute from '../Backend/routes/reportRoute.js'
 
 const app = express() 
 const hostname = '127.0.0.1'; 
-const port=process.env.PORT || 9090 
+const port=process.env.PORT || 48183
 const databaseName = 'TeamSyncIADB';
 
 mongoose.set('debug',true);
