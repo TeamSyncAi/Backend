@@ -228,52 +228,6 @@ async function main() {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  /* export async function createAccountClientSub(req, res) {
     
     if (!validationResult(req).isEmpty()) {
