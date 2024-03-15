@@ -11,13 +11,13 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 
-
 router.post('/registerclient', upload.single('cv'), [
   body('username').notEmpty().withMessage('Username is required'),
   body('email').notEmpty().withMessage('Invalid email'),
   body('numTel').notEmpty().withMessage('numTel is required'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
 ], extractSkillsFromUploadedPDF);
+
 
 
 /*router.post('/registerclientSub', [

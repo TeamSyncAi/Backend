@@ -30,6 +30,7 @@ dotenv.config();
 
 
 
+
 export async function createAccountClient(req, res) {
   try {
     if (!validationResult(req).isEmpty()) {
@@ -61,6 +62,218 @@ export async function createAccountClient(req, res) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+export async function extractSkillsFromUploadedPDF(req, res) {
+  try {
+    if (!validationResult(req).isEmpty()) {
+      console.error('Validation errors:', validationResult(req).array());
+      return res.status(400).json({ errors: validationResult(req).array() });
+    }
+
+   
+    if (!req.file) {
+      return res.status(400).json({ message: 'No PDF file uploaded' });
+    }
+
+ 
+    const pdfBuffer = req.file.buffer;
+    const pdfText = await parsePDF(pdfBuffer);
+    const skills = extractSkills(pdfText);
+
+   
+    const newUser = await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      numTel: req.body.numTel,
+      password: req.body.password,
+      Role: 'Client',
+      specialty: skills.join(', '), 
+    });
+
+    console.log('New user created:', newUser);
+
+    return res.status(200).json(newUser);
+  } catch (error) {
+    console.error('Error extracting skills from PDF:', error);
+    return res.status(500).json({ error: 'Failed to extract skills from PDF' });
+  }
+}
+
+export async function parsePDF(pdfBuffer) {
+  return new Promise((resolve, reject) => {
+    let text = '';
+
+    new PdfReader().parseBuffer(pdfBuffer, (err, item) => {
+      if (err) {
+        reject(err);
+        return;
+      } else if (!item) {
+        // Resolve with the extracted text when end of file is reached
+        resolve(text);
+      } else if (item.text) {
+        // Append the text from each item to the overall text
+        text += item.text;
+      }
+    });
+  });
+}
+
+const skillList = [
+  
+  "communication",
+  "teamwork",
+  "problem solving",
+  "leadership",
+  "creativity",
+  "time management",
+  "organization",
+  "analytical skills",
+  "interpersonal skills",
+  "adaptability",
+  "attention to detail",
+
+  "java",
+  "python",
+  "javascript",
+  "c++",
+  "c#",
+  "sql",
+  "html",
+  "css",
+  "linux",
+  "machine learning",
+
+  
+  "php",
+  "ruby",
+  "go",
+  "swift",
+  "kotlin",
+  "rust",
+  "react",
+  "angular",
+  "vue.js",
+  "node.js",
+  "express.js",
+  "django",
+  "spring boot",
+  "mongodb",
+  "cassandra",
+  "hadoop",
+  "spark",
+  "aws",
+  "azure",
+  "gcp",
+  "network security",
+  "devops",
+  "pandas",
+  "r",
+  "tensorflow",
+  "pytorch",
+  "agile",
+  "scrum",
+  "ux/ui",
+  "seo",
+  "sem",
+
+];
+function extractSkills(text) {
+  const words = text.match(/\b\w+\b/g); // Split text into words
+  if (!words) return []; // Return empty array if no words found
+
+  const uniqueSkills = [...new Set(words.map(word => word.toLowerCase()))]; // Convert to lowercase and remove duplicates
+  console.log('Extracted Skills:', uniqueSkills.join(', ')); // Log extracted skills
+  return uniqueSkills;
+}
+
+
+function determineSpecialties(skills) {
+  
+  const specialtyMap = {
+      "java": ["Java Developer"],
+      "python": ["Python Developer"],
+      "MongoDB":"", 
+  
+  };
+
+
+  let specialties = [];
+
+  for (const skill of skills) {
+      if (specialtyMap[skill]) {
+          specialties.push(...specialtyMap[skill]);
+      }
+  }
+
+  specialties = [...new Set(specialties)];
+
+  return specialties;
+}
+
+async function main() {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+      const pdfFileName = ""; 
+      const pdfPath = path.join(__dirname, "..", "uploads", pdfFileName);
+
+      
+      const pdfBuffer = fs.readFileSync(pdfPath);
+
+      
+      await parsePDF(pdfBuffer);
+      console.log("PDF parsing completed.");
+  } catch (error) {
+      console.error("Error:", error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  /* export async function createAccountClientSub(req, res) {
     
     if (!validationResult(req).isEmpty()) {
@@ -114,42 +327,22 @@ res.status(500).send('Server Error');
   }
 
   export async function authenticateClient(req, res) {
-     User.findOne({ username: req.body.username })
-      .then(user => {
-          if (!user) {
-              return res.status(401).json({ message: 'User is not registered' });
-          }
+    const { username, password } = req.body;
 
-          bcrypt.compare(req.body.password, user.password)
-              .then(valid => {
-                  if (!valid) {
-                      return res.status(401).json({ message: 'Password or username incorrect' });
-                  } else {
-                      const maxAge = 1 * 60 * 60;
-                      const token = jwt.sign(
-                          { userId: user._id, role: user.role },
-                          "" + process.env.JWT_SECRET,
-                          { expiresIn: maxAge } // 1hr in sec
-                      );
-                      res.cookie("jwt", token, {
-                          httpOnly: true,
-                          maxAge: maxAge * 1000, // 1hr in ms
-                          Secure: true,
-                      });
-
-                      res.status(200).json(user);
-                  }
-              })
-              .catch(error => {
-                  console.error('Error in bcrypt.compare:', error);
-                  res.status(500).json({ error: 'Internal Server Error' });
-              });
-      })
-      .catch(error => {
-          console.error('Error in User.findOne:', error);
-          res.status(500).json({ error: 'Internal Server Error' });
-      });
-}
+    try {
+      const user = await User.findByCredentials(username, password);
+  
+      if (user.isBanned) {
+        return res.status(403).json({ error: 'User is banned. Cannot login' });
+      }
+  
+      const token = await user.generateAuthToken();
+      res.status(200).json({ message: 'Login successful', user, token });
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(401).json({ error: error.message });
+    }
+  }
 
 
   export async function authenticateClientSub(req, res) {
@@ -618,172 +811,6 @@ export async function getUserSkills(req, res) {
 
 
 
-export async function extractSkillsFromUploadedPDF(req, res) {
-  try {
-    if (!validationResult(req).isEmpty()) {
-      console.error('Validation errors:', validationResult(req).array());
-      return res.status(400).json({ errors: validationResult(req).array() });
-    }
-
-    // Check if a PDF file was uploaded
-    if (!req.file) {
-      return res.status(400).json({ message: 'No PDF file uploaded' });
-    }
-
-    // Parse the uploaded PDF and extract skills
-    const pdfBuffer = req.file.buffer;
-    const pdfText = await parsePDF(pdfBuffer);
-    const skills = extractSkills(pdfText);
-
-    // Update the user's skills
-    const newUser = await User.create({
-      username: req.body.username,
-      email: req.body.email,
-      numTel: req.body.numTel,
-      password: req.body.password,
-      Role: 'Client',
-      specialty: skills.join(', '), // Store the extracted skills in the user's specialty field
-    });
-
-    console.log('New user created:', newUser);
-
-    return res.status(200).json(newUser);
-  } catch (error) {
-    console.error('Error extracting skills from PDF:', error);
-    return res.status(500).json({ error: 'Failed to extract skills from PDF' });
-  }
-}
-
-export async function parsePDF(pdfBuffer) {
-  return new Promise((resolve, reject) => {
-      let skills = [];
-      new PdfReader().parseBuffer(pdfBuffer, (err, item) => {
-          if (err) {
-              reject(err);
-              return;
-          } else if (!item) {
-             
-              const formattedSkills = skills.join(" ");
-              resolve(formattedSkills);
-          } else if (item.text) {
-              
-              const extractedSkills = extractSkills(item.text);
-              if (extractedSkills.length > 0) {
-                  skills = [...skills, ...extractedSkills];
-              }
-          }
-      });
-  });
-}
-
-const skillList = [
-  
-  "communication",
-  "teamwork",
-  "problem solving",
-  "leadership",
-  "creativity",
-  "time management",
-  "organization",
-  "analytical skills",
-  "interpersonal skills",
-  "adaptability",
-  "attention to detail",
-
-  "java",
-  "python",
-  "javascript",
-  "c++",
-  "c#",
-  "sql",
-  "html",
-  "css",
-  "linux",
-  "machine learning",
-
-  
-  "php",
-  "ruby",
-  "go",
-  "swift",
-  "kotlin",
-  "rust",
-  "react",
-  "angular",
-  "vue.js",
-  "node.js",
-  "express.js",
-  "django",
-  "spring boot",
-  "mongodb",
-  "cassandra",
-  "hadoop",
-  "spark",
-  "aws",
-  "azure",
-  "gcp",
-  "network security",
-  "devops",
-  "pandas",
-  "r",
-  "tensorflow",
-  "pytorch",
-  "agile",
-  "scrum",
-  "ux/ui",
-  "seo",
-  "sem",
-
-];
-function extractSkills(text) {
-  const words = text.match(/\b\w+\b/g); // Split text into words
-  if (!words) return []; // Return empty array if no words found
-
-  const uniqueSkills = [...new Set(words.map(word => word.toLowerCase()))]; // Convert to lowercase and remove duplicates
-  console.log('Extracted Skills:', uniqueSkills.join(', ')); // Log extracted skills
-  return uniqueSkills;
-}
-
-function determineSpecialties(skills) {
-  
-  const specialtyMap = {
-      "java": ["Java Developer"],
-      "python": ["Python Developer"],
-      "MongoDB":"", 
-  
-  };
-
-
-  let specialties = [];
-
-  for (const skill of skills) {
-      if (specialtyMap[skill]) {
-          specialties.push(...specialtyMap[skill]);
-      }
-  }
-
-  specialties = [...new Set(specialties)];
-
-  return specialties;
-}
-
-async function main() {
-  try {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-      const pdfFileName = "cv.pdf"; 
-      const pdfPath = path.join(__dirname, "..", "uploads", pdfFileName);
-
-      
-      const pdfBuffer = fs.readFileSync(pdfPath);
-
-      
-      await parsePDF(pdfBuffer);
-      console.log("PDF parsing completed.");
-  } catch (error) {
-      console.error("Error:", error);
-  }
-}
 
 
 main();
