@@ -75,15 +75,15 @@ throw new Error('Unable to generate auth token');
 };
 
 
-userSchema.statics.findByCredentials = async function (username, password) {
+userSchema.statics.findByCredentials = async function (email, password) {
   try {
-    console.log('Attempting to find user with username:', username);
+    console.log('Attempting to find user with email:', email);
 
-    // Find user by username
-    const user = await this.findOne({ username });
+    // Find user by email
+    const user = await this.findOne({ email });
 
     if (!user) {
-      console.error('User not found for username:', username);
+      console.error('User not found for email:', email);
       throw new Error('Username or password is incorrect');
     }
 
@@ -93,11 +93,11 @@ userSchema.statics.findByCredentials = async function (username, password) {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      console.error('Password does not match for user:', username);
+      console.error('Password does not match for user:', email);
       throw new Error('Username or password is incorrect');
     }
 
-    console.log('Password matched for user:', username);
+    console.log('Password matched for user:', email);
 
     return user;
   } catch (error) {

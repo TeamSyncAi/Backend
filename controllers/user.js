@@ -70,34 +70,36 @@ export async function extractSkillsFromUploadedPDF(req, res) {
       return res.status(400).json({ errors: validationResult(req).array() });
     }
 
-   
     if (!req.file) {
       return res.status(400).json({ message: 'No PDF file uploaded' });
     }
 
- 
     const pdfBuffer = req.file.buffer;
     const pdfText = await parsePDF(pdfBuffer);
-    const skills = extractSkills(pdfText);
+    const skill = extractSkill(pdfText);
 
-   
+    if (!skill) {
+      return res.status(400).json({ message: 'No skill detected from PDF' });
+    }
+
     const newUser = await User.create({
       username: req.body.username,
       email: req.body.email,
       numTel: req.body.numTel,
       password: req.body.password,
       Role: 'Client',
-      specialty: skills.join(', '), 
+      specialty: skill, // Store the extracted skill directly
     });
 
     console.log('New user created:', newUser);
 
     return res.status(200).json(newUser);
   } catch (error) {
-    console.error('Error extracting skills from PDF:', error);
-    return res.status(500).json({ error: 'Failed to extract skills from PDF' });
+    console.error('Error extracting skill from PDF:', error);
+    return res.status(500).json({ error: 'Failed to extract skill from PDF' });
   }
 }
+
 
 export async function parsePDF(pdfBuffer) {
   return new Promise((resolve, reject) => {
@@ -177,14 +179,21 @@ const skillList = [
   "sem",
 
 ];
-function extractSkills(text) {
+function extractSkill(text) {
   const words = text.match(/\b\w+\b/g); // Split text into words
-  if (!words) return []; // Return empty array if no words found
+  if (!words) return null; // Return null if no words found
 
-  const uniqueSkills = [...new Set(words.map(word => word.toLowerCase()))]; // Convert to lowercase and remove duplicates
-  console.log('Extracted Skills:', uniqueSkills.join(', ')); // Log extracted skills
-  return uniqueSkills;
+  for (const word of words) {
+    const lowerCaseWord = word.toLowerCase();
+    if (skillList.includes(lowerCaseWord)) {
+      console.log('Extracted Skill:', lowerCaseWord); // Log extracted skill
+      return lowerCaseWord; // Return the first detected skill
+    }
+  }
+
+  return null; // Return null if no skill found
 }
+
 
 
 function determineSpecialties(skills) {
@@ -281,10 +290,10 @@ res.status(500).send('Server Error');
   }
 
   export async function authenticateClient(req, res) {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-      const user = await User.findByCredentials(username, password);
+      const user = await User.findByCredentials(email, password);
   
       if (user.isBanned) {
         return res.status(403).json({ error: 'User is banned. Cannot login' });
