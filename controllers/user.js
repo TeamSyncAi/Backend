@@ -38,7 +38,7 @@ export async function createAccountClient(req, res) {
       return res.status(400).json({ errors: validationResult(req).array() });
     }
 
-    // Create the user object
+   
     const newUser = await User.create({
       username: req.body.username,
       email: req.body.email,
@@ -88,7 +88,7 @@ export async function extractSkillsFromUploadedPDF(req, res) {
       numTel: req.body.numTel,
       password: req.body.password,
       Role: 'Client',
-      specialty: skill, // Store the extracted skill directly
+      specialty: skill, 
     });
 
     console.log('New user created:', newUser);
