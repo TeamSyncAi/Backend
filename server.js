@@ -2,7 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import planningRoutes from './routes/planning.js';
+
+import planningRoutes from './routes/planningRoute.js';
+
+
 
 
 const app = express();
@@ -33,7 +36,8 @@ app.use(express.json());
 
 
 
-app.use('/plannings', planningRoutes);
+app.use('/planning', planningRoutes);
+
 
 
 // Démarrage du serveur
