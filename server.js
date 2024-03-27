@@ -1,4 +1,5 @@
-import express from 'express';
+/*import express from 'express';
+
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
@@ -9,7 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-
+import reclamationRoute from '../Backend/routes/reclamationRoute.js';
+import reportRoute from '../Backend/routes/reportRoute.js'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import { notFoundError, errorHandler } from './middlewares/error-handler.js';
@@ -34,7 +36,8 @@ app.use(notFoundError);
 app.use(errorHandler);
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
+app.use('/reclamation',reclamationRoute);
+app.use('/report',reportRoute);
 mongoose.connect('mongodb+srv://yassineezzar:0000@cluster0.2aohdjo.mongodb.net/?retryWrites=true&w=majority')
   .then(() => {
     console.log('Connected to MongoDB');
@@ -46,3 +49,39 @@ mongoose.connect('mongodb+srv://yassineezzar:0000@cluster0.2aohdjo.mongodb.net/?
 app.listen(3000, () => {
   console.log('Node app is running on port 3000');
 });
+*/
+import express from 'express';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+import reclamationRoute from '../Backend/routes/reclamationRoute.js';
+import reportRoute from '../Backend/routes/reportRoute.js'
+
+const app = express() 
+const hostname = '127.0.0.1'; 
+const port=process.env.PORT || 48183
+const databaseName = 'TeamSyncIADB';
+
+mongoose.set('debug',true);
+mongoose.Promise = global.Promise;
+mongoose
+mongoose
+  .connect(`mongodb://${hostname}:27017/${databaseName}`)
+  .then(() => {
+    console.log(`Connected to ${databaseName}`);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+app.use(morgan("dev"));
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+
+app.use('/reclamation',reclamationRoute);
+app.use('/report',reportRoute);
+
+
+
+app.listen(port,()=>{
+    console.log(`Server running ${hostname}:${port}`)
+})
