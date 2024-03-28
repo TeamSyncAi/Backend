@@ -25,11 +25,21 @@ const reclamationSchema = new Schema({
     enum: ['ideas and suggestions', 'reporting problems', 'task and project management','support requests','feedback','health'],
     required:false
   },
-  /*responsable: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Utilisateur'
+  email: {
+    type: String,
+    validate: {
+      validator: function(value) {
+        // Utiliser une expression régulière pour valider le format de l'e-mail
+        return /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(value);
+      },
+      message: props => `${props.value} is not a valid email address!`
+    }
   },
-  utilisateur: {
+  projectName: {
+    type: String,
+    required: true
+  }
+  /*utilisateur: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Utilisateur',
     required: true
