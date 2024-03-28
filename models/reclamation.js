@@ -12,18 +12,18 @@ const reclamationSchema = new Schema({
   },
   date: {
     type: Date,
-    required: true
+    required: false
   },
   
   status: {
     type: String,
     enum: ['In progress', 'Accepted', 'Rejected'],
-    default: 'En attente'
+    default: 'In progress'
   },
   type: {
     type: String,
-    enum: ['ideas and suggestions', 'reporting problems', 'task and project management','support Requests','feedback','health'],
-    
+    enum: ['ideas and suggestions', 'reporting problems', 'task and project management','support requests','feedback','health'],
+    required:false
   },
   /*responsable: {
     type: mongoose.Schema.Types.ObjectId,
